@@ -31,6 +31,12 @@ export default function WithdrawForm() {
 	const [copied, setCopied] = useState(false);
 
 	useEffect(() => {
+		if (!success) return;
+		const t = setTimeout(() => setSuccess(""), 4000);
+		return () => clearTimeout(t);
+	}, [success]);
+
+	useEffect(() => {
 		const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
 		if (!token) { router.replace("/auth"); return; }
 

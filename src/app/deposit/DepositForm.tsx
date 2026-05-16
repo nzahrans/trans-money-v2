@@ -29,6 +29,12 @@ export default function DepositForm() {
 	const [success, setSuccess] = useState("");
 
 	useEffect(() => {
+		if (!success) return;
+		const t = setTimeout(() => setSuccess(""), 4000);
+		return () => clearTimeout(t);
+	}, [success]);
+
+	useEffect(() => {
 		const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
 		if (!token) { router.replace("/auth"); return; }
 		fetch("http://localhost:3001/users", { headers: { Authorization: `Bearer ${token}` } })
