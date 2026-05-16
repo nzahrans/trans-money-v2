@@ -14,6 +14,7 @@ export default function AuditLogTable() {
   const [logs, setLogs] = useState<AuditLog[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [search, setSearch] = useState("");
 
   useEffect(() => {
     const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
@@ -60,9 +61,18 @@ export default function AuditLogTable() {
   }
   return (
     <div className="max-w-6xl mx-auto flex flex-col gap-6">
-      <div>
-        <h1 className="text-2xl font-bold bg-gradient-to-r from-violet-600 to-indigo-600 bg-clip-text text-transparent">Audit Log</h1>
-        <p className="text-sm text-slate-500 dark:text-slate-400 mt-0.5">Rekam aktivitas sistem</p>
+      <div className="flex items-center justify-between flex-wrap gap-3">
+        <div>
+          <h1 className="text-2xl font-bold bg-gradient-to-r from-violet-600 to-indigo-600 bg-clip-text text-transparent">Audit Log</h1>
+          <p className="text-sm text-slate-500 dark:text-slate-400 mt-0.5">Rekam aktivitas sistem</p>
+        </div>
+        <input
+          type="text"
+          placeholder="Cari aksi..."
+          className="border border-slate-200 dark:border-violet-700/30 bg-white dark:bg-[#211c45] px-3 py-2 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-violet-500 text-slate-900 dark:text-slate-100 placeholder:text-slate-400 w-52 shadow-sm"
+          value={search}
+          onChange={e => setSearch(e.target.value)}
+        />
       </div>
       <div className="bg-white dark:bg-[#1a1635] rounded-2xl border border-slate-100 dark:border-violet-900/30 shadow-sm">
         <div className="overflow-x-auto">
@@ -76,7 +86,9 @@ export default function AuditLogTable() {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 dark:divide-violet-900/20">
-              {logs.map((log) => (
+              {logs
+                .filter(log => !search || log.action.toLowerCase().includes(search.toLowerCase()))
+                .map((log) => (
                 <tr key={log.id} className="hover:bg-violet-50/40 dark:hover:bg-violet-900/10 transition-colors">
                   <td className="px-5 py-3.5 text-slate-400 dark:text-slate-500 tabular-nums">{log.id}</td>
                   <td className="px-5 py-3.5 text-xs text-slate-500 dark:text-slate-400 whitespace-nowrap">
@@ -88,7 +100,7 @@ export default function AuditLogTable() {
                   <td className="px-5 py-3.5 text-right text-slate-600 dark:text-slate-400 tabular-nums">{log.userId}</td>
                 </tr>
               ))}
-              {logs.length === 0 && (
+              {logs.filter(log => !search || log.action.toLowerCase().includes(search.toLowerCase())).length === 0 && (
                 <tr>
                   <td colSpan={4} className="px-5 py-12 text-center text-slate-400 dark:text-slate-500 text-sm">
                     Tidak ada log aktivitas
