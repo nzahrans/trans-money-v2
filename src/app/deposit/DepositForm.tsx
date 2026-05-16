@@ -61,9 +61,9 @@ export default function DepositForm() {
 	return (
 		<div className="flex flex-col items-center gap-6 w-full">
 			<div className="w-full max-w-5xl">
-			<h1 className="text-xl font-bold text-slate-800 dark:text-slate-100 mb-4 text-center">Deposit</h1>
+			<h1 className="text-2xl font-bold bg-gradient-to-r from-violet-600 to-indigo-600 bg-clip-text text-transparent mb-4 text-center">Deposit</h1>
 			<div className="w-full">
-				<div className="bg-white dark:bg-[#161b27] rounded-xl border border-slate-200 dark:border-slate-800">
+				<div className="bg-white dark:bg-[#1a1635] rounded-2xl border border-slate-100 dark:border-violet-900/30 shadow-sm">
 					<form onSubmit={handleSubmit} className="p-6 flex flex-col gap-5">
 						{error && (
 							<div className="p-3 rounded-lg bg-red-50 dark:bg-red-500/10 border border-red-200 dark:border-red-500/20 text-sm text-red-600 dark:text-red-400 flex items-center gap-2">
@@ -82,7 +82,7 @@ export default function DepositForm() {
 								<FaUser size={12} /> Nama Pencatat
 							</label>
 							<select
-								className="w-full border border-slate-200 dark:border-slate-700 bg-white dark:bg-[#1a2235] px-4 py-2.5 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-slate-900 dark:text-slate-100"
+								className="w-full border border-slate-200 dark:border-violet-700/30 bg-slate-50 dark:bg-[#211c45] px-4 py-2.5 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-violet-500 text-slate-900 dark:text-slate-100"
 								value={recorder}
 								onChange={e => setRecorder(e.target.value)}
 								required
@@ -100,7 +100,7 @@ export default function DepositForm() {
 								<FaEnvelope size={12} /> Keperluan
 							</label>
 							<select
-								className="w-full border border-slate-200 dark:border-slate-700 bg-white dark:bg-[#1a2235] px-4 py-2.5 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-slate-900 dark:text-slate-100"
+								className="w-full border border-slate-200 dark:border-violet-700/30 bg-slate-50 dark:bg-[#211c45] px-4 py-2.5 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-violet-500 text-slate-900 dark:text-slate-100"
 								value={purpose}
 								onChange={e => setPurpose(e.target.value)}
 								required
@@ -114,12 +114,12 @@ export default function DepositForm() {
 
 						{/* Amount */}
 						<div className="relative">
-							<span className="absolute left-4 top-1/2 -translate-y-1/2 text-sm font-medium text-slate-400 pointer-events-none select-none">
+							<span className="absolute left-4 top-1/2 -translate-y-1/2 text-sm font-medium text-slate-400 dark:text-slate-500 pointer-events-none select-none">
 								Rp
 							</span>
 							<input
 								type="number"
-								className="w-full border border-slate-200 dark:border-slate-700 bg-white dark:bg-[#1a2235] pl-10 pr-4 py-2.5 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-slate-900 dark:text-slate-100 placeholder:text-slate-400"
+								className="w-full border border-slate-200 dark:border-violet-700/30 bg-slate-50 dark:bg-[#211c45] pl-10 pr-4 py-2.5 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-violet-500 text-slate-900 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500"
 								value={amount}
 								onChange={e => setAmount(e.target.value)}
 								required
@@ -132,7 +132,7 @@ export default function DepositForm() {
 						<div>
 							<label className="block text-sm font-medium text-slate-600 dark:text-slate-400 mb-2">Notes</label>
 							<textarea
-								className="w-full border border-slate-200 dark:border-slate-700 bg-white dark:bg-[#1a2235] px-4 py-2.5 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-slate-900 dark:text-slate-100 placeholder:text-slate-400 resize-y min-h-[100px]"
+							className="w-full border border-slate-200 dark:border-violet-700/30 bg-slate-50 dark:bg-[#211c45] px-4 py-2.5 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-violet-500 text-slate-900 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500 resize-y min-h-[100px]"
 								value={notes}
 								onChange={e => setNotes(e.target.value)}
 								placeholder="Add any additional notes here..."
@@ -142,7 +142,7 @@ export default function DepositForm() {
 						<button
 							type="submit"
 							disabled={loading}
-							className="w-full py-2.5 rounded-lg font-semibold text-sm text-white bg-sky-500 hover:bg-sky-600 active:bg-sky-700 transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+							className="w-full py-2.5 rounded-lg font-semibold text-sm text-white bg-gradient-to-r from-indigo-500 to-violet-600 hover:from-indigo-600 hover:to-violet-700 active:opacity-90 transition-all shadow-md shadow-violet-200 dark:shadow-violet-900/20 disabled:opacity-60 disabled:cursor-not-allowed"
 						>
 							{loading ? (
 								<span className="flex items-center justify-center gap-2">
