@@ -3,7 +3,7 @@ import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { FaSignOutAlt, FaChevronDown } from "react-icons/fa";
 
-function decodeJwtPayload(token: string): { username?: string; id?: number } | null {
+function decodeJwtPayload(token: string): { username?: string; id?: number; role?: string } | null {
   try {
     return JSON.parse(atob(token.split(".")[1]));
   } catch {
@@ -14,6 +14,7 @@ function decodeJwtPayload(token: string): { username?: string; id?: number } | n
 export default function UserBadge() {
   const router = useRouter();
   const [username, setUsername] = useState("");
+  const [role, setRole] = useState("");
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
@@ -22,6 +23,7 @@ export default function UserBadge() {
     if (!token) return;
     const payload = decodeJwtPayload(token);
     if (payload?.username) setUsername(payload.username);
+    if (payload?.role) setRole(payload.role);
   }, []);
 
   useEffect(() => {
@@ -66,6 +68,13 @@ export default function UserBadge() {
             <div className="min-w-0">
               <p className="text-[11px] text-slate-500 dark:text-slate-400">Login sebagai</p>
               <p className="font-semibold text-slate-800 dark:text-slate-100 text-sm truncate">{username}</p>
+              {role && (
+                <span className={`inline-block mt-0.5 text-[10px] font-semibold px-1.5 py-0.5 rounded-full ${
+                  role === 'admin'
+                    ? 'bg-violet-100 dark:bg-violet-900/40 text-violet-700 dark:text-violet-300'
+                    : 'bg-slate-100 dark:bg-slate-700/40 text-slate-500 dark:text-slate-400'
+                }`}>{role}</span>
+              )}
             </div>
           </div>
           <button

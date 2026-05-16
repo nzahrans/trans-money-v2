@@ -217,7 +217,7 @@ export default function DashboardMain() {
                     )}
                   </td>
                   <td className="px-5 py-3.5 whitespace-nowrap text-xs text-slate-500 dark:text-slate-400">
-                    {new Date(trx.createdAt).toLocaleDateString("id-ID", { day: "2-digit", month: "2-digit", year: "numeric" })}
+                    {new Date(trx.createdAt).toLocaleDateString("id-ID", { day: "2-digit", month: "2-digit", year: "numeric", timeZone: "UTC" })}
                   </td>
                   <td className="px-5 py-3.5">
                     <StatusBadge type={trx.type} />

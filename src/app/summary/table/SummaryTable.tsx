@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import StatusBadge from "../../../components/StatusBadge";
 import { FaEdit, FaTrash, FaTimes } from "react-icons/fa";
@@ -24,6 +24,10 @@ export default function SummaryTable() {
   const [filter, setFilter] = useState<"all" | "deposit" | "withdraw">("all");
   const [search, setSearch] = useState("");
   const [refreshKey, setRefreshKey] = useState(0);
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalCount, setTotalCount] = useState(0);
+  const LIMIT = 20;
   const [deletingId, setDeletingId] = useState<number | null>(null);
   const [deleteError, setDeleteError] = useState("");
   const [editingTrx, setEditingTrx] = useState<Transaction | null>(null);
@@ -35,17 +39,21 @@ export default function SummaryTable() {
     const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
     if (!token) { router.replace("/auth"); return; }
     setLoading(true);
-    fetch("http://localhost:3001/transaction/history", {
+    fetch(`http://localhost:3001/transaction/history?page=${page}&limit=20`, {
       headers: { Authorization: `Bearer ${token}` },
     })
       .then(async res => {
         if (!res.ok) throw new Error("Gagal mengambil data transaksi");
         return res.json();
       })
-      .then(data => setTransactions(Array.isArray(data) ? data : []))
+      .then(data => {
+        setTransactions(Array.isArray(data.transactions) ? data.transactions : []);
+        setTotalCount(data.total ?? 0);
+        setTotalPages(data.totalPages ?? 1);
+      })
       .catch(err => setError(err.message))
       .finally(() => setLoading(false));
-  }, [router, refreshKey]);
+  }, [router, refreshKey, page]);
 
   const handleDelete = async (id: number) => {
     const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
@@ -121,7 +129,7 @@ export default function SummaryTable() {
       <div className="flex items-center justify-between flex-wrap gap-3">
         <div>
           <h1 className="text-2xl font-bold bg-gradient-to-r from-violet-600 to-indigo-600 bg-clip-text text-transparent">Summary</h1>
-          <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Menampilkan {filtered.length} dari {transactions.length} transaksi</p>
+          <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Menampilkan {filtered.length} dari {totalCount} transaksi</p>
         </div>
         <div className="flex items-center gap-2 flex-wrap">
           <input
@@ -180,7 +188,7 @@ export default function SummaryTable() {
                   )}
                 </td>
                 <td className="px-5 py-3.5 whitespace-nowrap text-xs text-slate-500 dark:text-slate-400">
-                  {new Date(trx.createdAt).toLocaleDateString("id-ID", { day: "2-digit", month: "short", year: "numeric" })}
+                  {new Date(trx.createdAt).toLocaleDateString("id-ID", { day: "2-digit", month: "short", year: "numeric", timeZone: "UTC" })}
                 </td>
                 <td className="px-5 py-3.5 text-slate-800 dark:text-slate-100 font-medium">{trx.purpose}</td>
                 <td className="px-5 py-3.5 text-slate-600 dark:text-slate-300 text-xs">
@@ -206,7 +214,22 @@ export default function SummaryTable() {
         </table>
       </div>
 
-      {/* Edit Modal */}
+      {/* Pagination */}
+      {totalPages > 1 && (
+        <div className="flex items-center justify-between px-5 py-3.5 border-t border-slate-100 dark:border-violet-900/20">
+          <span className="text-xs text-slate-500 dark:text-slate-400">Halaman {page} dari {totalPages}</span>
+          <div className="flex gap-1">
+            <button onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page === 1}
+              className="px-3 py-1.5 text-xs rounded-lg border border-slate-200 dark:border-violet-900/30 disabled:opacity-40 hover:bg-violet-50 dark:hover:bg-violet-900/20 transition-colors text-slate-600 dark:text-slate-300">
+              ← Prev
+            </button>
+            <button onClick={() => setPage(p => Math.min(totalPages, p + 1))} disabled={page === totalPages}
+              className="px-3 py-1.5 text-xs rounded-lg border border-slate-200 dark:border-violet-900/30 disabled:opacity-40 hover:bg-violet-50 dark:hover:bg-violet-900/20 transition-colors text-slate-600 dark:text-slate-300">
+              Next →
+            </button>
+          </div>
+        </div>
+      )}
       {editingTrx && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
           <div className="bg-white dark:bg-[#1a1635] rounded-2xl border border-slate-100 dark:border-violet-900/30 shadow-2xl w-full max-w-md mx-4 p-6">

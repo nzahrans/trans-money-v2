@@ -12,15 +12,25 @@ import {
   FaChartLine,
   FaDownload,
   FaHistory,
+  FaListAlt,
+  FaUsers,
+  FaBars,
+  FaTimes,
 } from "react-icons/fa";
+import { useUserRole } from "../lib/useUserRole";
 
 export default function Sidebar() {
   const pathname = usePathname();
+  const { isAdmin } = useUserRole();
   const [summaryOpen, setSummaryOpen] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
 
   useEffect(() => {
     if (pathname.startsWith("/summary")) setSummaryOpen(true);
   }, [pathname]);
+
+  // Tutup sidebar mobile saat navigasi
+  useEffect(() => { setMobileOpen(false); }, [pathname]);
 
   const navLink = (href: string, label: string, icon: React.ReactNode, exact = false) => {
     const active = exact
@@ -44,8 +54,8 @@ export default function Sidebar() {
 
   const isSummaryActive = pathname.startsWith("/summary");
 
-  return (
-    <aside className="h-screen w-60 bg-white dark:bg-[#1e1b4b] border-r-2 border-slate-200 dark:border-white/[0.10] flex flex-col fixed left-0 top-0 z-30 select-none">
+  const sidebarContent = (
+    <>
       {/* Brand */}
       <div className="flex items-center gap-3 px-5 py-4 border-b border-slate-200/80 dark:border-white/[0.08]">
         <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-violet-500 to-indigo-600 flex items-center justify-center flex-shrink-0 shadow-lg shadow-violet-500/40">
@@ -64,6 +74,7 @@ export default function Sidebar() {
         {navLink("/dashboard", "Dashboard", <FaWallet size={15} />, true)}
         {navLink("/deposit", "Deposit", <FaArrowDown size={15} />)}
         {navLink("/withdraw", "Withdraw", <FaArrowUp size={15} />)}
+        {navLink("/transaction/history", "Riwayat Transaksi", <FaListAlt size={14} />)}
 
         {/* Summary with sub-menu */}
         <button
@@ -113,8 +124,51 @@ export default function Sidebar() {
 
         <p className="px-3 py-2 mt-2 text-[10px] font-semibold text-slate-400 dark:text-indigo-300/40 uppercase tracking-widest">Tools</p>
         {navLink("/export", "Export Data", <FaDownload size={14} />)}
-        {navLink("/auditlog", "Audit Log", <FaHistory size={14} />)}
+
+        {/* Admin only */}
+        {isAdmin && (
+          <>
+            {navLink("/auditlog", "Audit Log", <FaHistory size={14} />)}
+            {navLink("/users/manage", "Kelola Pengguna", <FaUsers size={14} />)}
+          </>
+        )}
       </nav>
-    </aside>
+    </>
+  );
+
+  return (
+    <>
+      {/* Tombol hamburger mobile */}
+      <button
+        onClick={() => setMobileOpen(true)}
+        className="lg:hidden fixed top-3.5 left-3 z-40 p-2 rounded-lg bg-white dark:bg-[#1e1b4b] border border-slate-200 dark:border-white/10 shadow-sm text-slate-600 dark:text-indigo-200"
+      >
+        <FaBars size={16} />
+      </button>
+
+      {/* Overlay mobile */}
+      {mobileOpen && (
+        <div
+          className="lg:hidden fixed inset-0 z-40 bg-black/40"
+          onClick={() => setMobileOpen(false)}
+        />
+      )}
+
+      {/* Sidebar desktop */}
+      <aside className="hidden lg:flex h-screen w-60 bg-white dark:bg-[#1e1b4b] border-r-2 border-slate-200 dark:border-white/[0.10] flex-col fixed left-0 top-0 z-30 select-none">
+        {sidebarContent}
+      </aside>
+
+      {/* Sidebar mobile (slide-in) */}
+      <aside className={`lg:hidden fixed top-0 left-0 h-screen w-64 bg-white dark:bg-[#1e1b4b] border-r-2 border-slate-200 dark:border-white/[0.10] flex flex-col z-50 select-none transition-transform duration-300 ${mobileOpen ? "translate-x-0" : "-translate-x-full"}`}>
+        <button
+          onClick={() => setMobileOpen(false)}
+          className="absolute top-3.5 right-3 p-1.5 rounded-lg text-slate-400 hover:bg-slate-100 dark:hover:bg-white/10"
+        >
+          <FaTimes size={14} />
+        </button>
+        {sidebarContent}
+      </aside>
+    </>
   );
 }
