@@ -37,11 +37,13 @@ export default function Sidebar() {
       <Link
         key={href}
         href={href}
-        className={`flex items-center gap-3 px-3 py-2.5 rounded-lg font-medium text-sm transition-colors ${
-          active ? "bg-blue-600 text-white" : "text-slate-400 hover:bg-white/8 hover:text-slate-200"
+        className={`flex items-center gap-3 px-3 py-2.5 rounded-xl font-medium text-sm transition-all border-l-2 ${
+          active
+            ? "bg-violet-100 text-violet-900 border-violet-500 pl-[10px] shadow-sm dark:bg-white/[0.12] dark:text-white dark:border-violet-400"
+            : "text-slate-500 hover:bg-slate-100 hover:text-slate-700 border-transparent dark:text-indigo-200/60 dark:hover:bg-white/[0.06] dark:hover:text-indigo-100"
         }`}
       >
-        <span className={active ? "text-white" : "text-slate-500"}>{icon}</span>
+        <span className={active ? "text-violet-600 dark:text-violet-300" : "text-slate-400 dark:text-indigo-300/50"}>{icon}</span>
         {label}
       </Link>
     );
@@ -50,21 +52,21 @@ export default function Sidebar() {
   const isSummaryActive = pathname.startsWith("/summary");
 
   return (
-    <aside className="h-screen w-60 bg-slate-900 flex flex-col fixed left-0 top-0 z-30 select-none">
+    <aside className="h-screen w-60 bg-white dark:bg-[#1e1b4b] border-r-2 border-slate-200 dark:border-white/[0.10] flex flex-col fixed left-0 top-0 z-30 select-none">
       {/* Brand */}
-      <div className="flex items-center gap-3 px-5 py-4 border-b border-white/10">
-        <div className="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center flex-shrink-0">
-          <FaWallet size={14} className="text-white" />
+      <div className="flex items-center gap-3 px-5 py-4 border-b border-slate-200/80 dark:border-white/[0.08]">
+        <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-violet-500 to-indigo-600 flex items-center justify-center flex-shrink-0 shadow-lg shadow-violet-500/40">
+          <FaWallet size={15} className="text-white" />
         </div>
         <div className="min-w-0">
-          <p className="font-bold text-sm text-white leading-tight truncate">Trans Kota Kita</p>
-          <p className="text-[10px] text-slate-400 leading-tight mt-0.5">Manajemen Keuangan</p>
+          <p className="font-bold text-sm text-slate-900 dark:text-white leading-tight truncate">Trans Kota Kita</p>
+          <p className="text-[10px] text-slate-400 dark:text-indigo-300/50 leading-tight mt-0.5">Manajemen Keuangan</p>
         </div>
       </div>
 
       {/* Nav */}
       <nav className="flex-1 flex flex-col gap-0.5 mt-2 px-3 overflow-y-auto">
-        <p className="px-3 py-2 text-[10px] font-semibold text-slate-500 uppercase tracking-widest">Menu</p>
+        <p className="px-3 py-2 text-[10px] font-semibold text-slate-400 dark:text-indigo-300/40 uppercase tracking-widest">Menu</p>
 
         {navLink("/dashboard", "Dashboard", <FaWallet size={15} />, true)}
         {navLink("/deposit", "Deposit", <FaArrowDown size={15} />)}
@@ -73,28 +75,26 @@ export default function Sidebar() {
         {/* Summary with sub-menu */}
         <button
           onClick={() => setSummaryOpen(prev => !prev)}
-          className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg font-medium text-sm transition-colors ${
-            isSummaryActive && !summaryOpen
-              ? "bg-blue-600 text-white"
-              : isSummaryActive
-              ? "text-slate-200 bg-white/8"
-              : "text-slate-400 hover:bg-white/8 hover:text-slate-200"
+          className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl font-medium text-sm transition-all border-l-2 ${
+            isSummaryActive
+              ? "bg-violet-100 text-violet-900 border-violet-500 pl-[10px] shadow-sm dark:bg-white/[0.12] dark:text-white dark:border-violet-400"
+              : "text-slate-500 hover:bg-slate-100 hover:text-slate-700 border-transparent dark:text-indigo-200/60 dark:hover:bg-white/[0.06] dark:hover:text-indigo-100"
           }`}
         >
-          <span className={isSummaryActive ? "text-blue-400" : "text-slate-500"}>
+          <span className={isSummaryActive ? "text-violet-600 dark:text-violet-300" : "text-slate-400 dark:text-indigo-300/50"}>
             <FaChartBar size={15} />
           </span>
           <span className="flex-1 text-left">Summary</span>
           <FaChevronDown
             size={11}
-            className={`transition-transform duration-200 ${
-              summaryOpen ? "rotate-180" : ""
-            } ${isSummaryActive ? "text-slate-300" : "text-slate-600"}`}
+            className={`transition-transform duration-200 ${summaryOpen ? "rotate-180" : ""} ${
+              isSummaryActive ? "text-violet-600 dark:text-indigo-300" : "text-slate-400 dark:text-indigo-400/40"
+            }`}
           />
         </button>
 
         {summaryOpen && (
-          <div className="ml-4 pl-3 border-l border-white/10 flex flex-col gap-0.5 mb-1">
+          <div className="ml-4 pl-3 border-l border-slate-200 dark:border-indigo-400/20 flex flex-col gap-0.5 mb-1">
             {([
               { href: "/summary/table", label: "Table", icon: <FaTable size={12} /> },
               { href: "/summary/graphic", label: "Graphic", icon: <FaChartLine size={12} /> },
@@ -104,13 +104,13 @@ export default function Sidebar() {
                 <Link
                   key={sub.href}
                   href={sub.href}
-                  className={`flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium transition-colors ${
+                  className={`flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium transition-all ${
                     active
-                      ? "bg-blue-600 text-white"
-                      : "text-slate-400 hover:bg-white/8 hover:text-slate-200"
+                      ? "bg-violet-100 text-violet-900 dark:bg-white/[0.12] dark:text-white"
+                      : "text-slate-500 hover:bg-slate-50 hover:text-slate-700 dark:text-indigo-200/50 dark:hover:bg-white/[0.05] dark:hover:text-indigo-100"
                   }`}
                 >
-                  <span className={active ? "text-white" : "text-slate-500"}>{sub.icon}</span>
+                  <span className={active ? "text-violet-600 dark:text-violet-300" : "text-slate-400 dark:text-indigo-300/40"}>{sub.icon}</span>
                   {sub.label}
                 </Link>
               );
@@ -120,12 +120,12 @@ export default function Sidebar() {
       </nav>
 
       {/* Bottom */}
-      <div className="px-3 pb-4 pt-2 border-t border-white/10">
+      <div className="px-3 pb-4 pt-2 border-t border-slate-200/80 dark:border-white/[0.08]">
         <button
           onClick={handleLogout}
-          className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg font-medium text-sm text-slate-400 hover:bg-red-500/15 hover:text-red-400 transition-colors"
+          className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl font-medium text-sm text-rose-500 dark:text-rose-300/70 hover:bg-rose-50 dark:hover:bg-rose-500/10 hover:text-rose-600 dark:hover:text-rose-300 transition-all"
         >
-          <FaSignOutAlt size={15} className="text-slate-500" />
+          <FaSignOutAlt size={15} className="text-rose-400 dark:text-rose-400/50" />
           Logout
         </button>
       </div>
