@@ -46,7 +46,7 @@ export default function SummaryTable() {
   if (loading) return (
     <div className="flex items-center justify-center h-64">
       <div className="flex flex-col items-center gap-3">
-        <svg className="animate-spin h-8 w-8 text-blue-500" fill="none" viewBox="0 0 24 24">
+        <svg className="animate-spin h-8 w-8 text-violet-500" fill="none" viewBox="0 0 24 24">
           <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
           <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
         </svg>
@@ -64,17 +64,17 @@ export default function SummaryTable() {
   return (
     <div className="max-w-6xl mx-auto flex flex-col gap-6">
       <div className="flex items-center justify-between flex-wrap gap-3">
-        <h1 className="text-xl font-bold text-slate-800 dark:text-slate-100">Riwayat Transaksi</h1>
+        <h1 className="text-2xl font-bold bg-gradient-to-r from-violet-600 to-indigo-600 bg-clip-text text-transparent">Riwayat Transaksi</h1>
         <div className="flex items-center gap-2 flex-wrap">
           <input
             type="text"
             placeholder="Cari keperluan / recorder..."
-            className="border border-slate-200 dark:border-slate-700 bg-white dark:bg-[#1a2235] px-3 py-2 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-slate-900 dark:text-slate-100 placeholder:text-slate-400 w-52"
+            className="border border-slate-200 dark:border-violet-700/30 bg-white dark:bg-[#211c45] px-3 py-2 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-violet-500 text-slate-900 dark:text-slate-100 placeholder:text-slate-400 w-52 shadow-sm"
             value={search}
             onChange={e => setSearch(e.target.value)}
           />
           <select
-            className="border border-slate-200 dark:border-slate-700 bg-white dark:bg-[#1a2235] px-3 py-2 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-slate-900 dark:text-slate-100"
+            className="border border-slate-200 dark:border-violet-700/30 bg-white dark:bg-[#211c45] px-3 py-2 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-violet-500 text-slate-900 dark:text-slate-100 shadow-sm"
             value={filter}
             onChange={e => setFilter(e.target.value as "all" | "deposit" | "withdraw")}
           >
@@ -85,10 +85,10 @@ export default function SummaryTable() {
         </div>
       </div>
 
-      <div className="bg-white dark:bg-[#161b27] rounded-xl border border-slate-200 dark:border-slate-800 overflow-x-auto">
+      <div className="bg-white dark:bg-[#1a1635] rounded-2xl border border-slate-100 dark:border-violet-900/30 shadow-sm overflow-x-auto">
         <table className="w-full text-sm">
           <thead>
-            <tr className="text-xs uppercase tracking-wide text-slate-500 dark:text-slate-400 bg-slate-50 dark:bg-slate-800/50">
+            <tr className="text-xs uppercase tracking-wide text-slate-500 dark:text-slate-400 bg-violet-50/60 dark:bg-violet-900/20">
               <th className="px-5 py-3 text-left font-medium">Tanggal</th>
               <th className="px-5 py-3 text-left font-medium">Keperluan</th>
               <th className="px-5 py-3 text-left font-medium">Recorder</th>
@@ -97,18 +97,18 @@ export default function SummaryTable() {
               <th className="px-5 py-3 text-left font-medium">Notes</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
+          <tbody className="divide-y divide-slate-100 dark:divide-violet-900/20">
             {filtered.map(trx => (
-              <tr key={trx.id} className="hover:bg-slate-50 dark:hover:bg-white/5 transition-colors">
+              <tr key={trx.id} className="hover:bg-violet-50/40 dark:hover:bg-violet-900/10 transition-colors">
                 <td className="px-5 py-3.5 whitespace-nowrap text-xs text-slate-500 dark:text-slate-400">
                   {new Date(trx.createdAt).toLocaleDateString("id-ID", { day: "2-digit", month: "short", year: "numeric" })}
                 </td>
-                <td className="px-5 py-3.5 text-slate-800 dark:text-slate-200 font-medium">{trx.purpose}</td>
+                <td className="px-5 py-3.5 text-slate-800 dark:text-slate-100 font-medium">{trx.purpose}</td>
                 <td className="px-5 py-3.5 text-slate-600 dark:text-slate-300 text-xs">
                   {trx.recorder || <span className="text-slate-300 dark:text-slate-600 italic">—</span>}
                 </td>
                 <td className="px-5 py-3.5"><StatusBadge type={trx.type} /></td>
-                <td className={`px-5 py-3.5 text-right font-semibold tabular-nums ${trx.type === "deposit" ? "text-emerald-600 dark:text-emerald-400" : "text-red-600 dark:text-red-400"}`}>
+                <td className={`px-5 py-3.5 text-right font-semibold tabular-nums ${trx.type === "deposit" ? "text-emerald-600 dark:text-emerald-400" : "text-rose-600 dark:text-rose-400"}`}>
                   {trx.type === "withdraw" ? "−" : "+"}Rp {trx.amount.toLocaleString("id-ID")}
                 </td>
                 <td className="px-5 py-3.5 text-xs text-slate-400 dark:text-slate-500 max-w-[200px] truncate">

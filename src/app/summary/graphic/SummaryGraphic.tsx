@@ -35,7 +35,7 @@ export default function SummaryGraphic() {
   if (loading) return (
     <div className="flex items-center justify-center h-64">
       <div className="flex flex-col items-center gap-3">
-        <svg className="animate-spin h-8 w-8 text-blue-500" fill="none" viewBox="0 0 24 24">
+        <svg className="animate-spin h-8 w-8 text-violet-500" fill="none" viewBox="0 0 24 24">
           <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
           <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
         </svg>
@@ -52,10 +52,10 @@ export default function SummaryGraphic() {
 
   return (
     <div className="max-w-6xl mx-auto flex flex-col gap-6">
-      <h1 className="text-xl font-bold text-slate-800 dark:text-slate-100">Grafik Ringkasan</h1>
+      <h1 className="text-2xl font-bold bg-gradient-to-r from-violet-600 to-indigo-600 bg-clip-text text-transparent">Grafik Ringkasan</h1>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div className="bg-white dark:bg-[#161b27] rounded-xl border border-slate-200 dark:border-slate-800 p-5">
+        <div className="bg-white dark:bg-[#1a1635] rounded-2xl border border-slate-100 dark:border-violet-900/30 shadow-sm p-5">
           <h2 className="font-semibold text-slate-700 dark:text-slate-200 text-sm mb-4">Transaksi Bulanan</h2>
           {data && (
             <MonthlyChart
@@ -65,7 +65,7 @@ export default function SummaryGraphic() {
           )}
         </div>
 
-        <div className="bg-white dark:bg-[#161b27] rounded-xl border border-slate-200 dark:border-slate-800 p-5">
+        <div className="bg-white dark:bg-[#1a1635] rounded-2xl border border-slate-100 dark:border-violet-900/30 shadow-sm p-5">
           <h2 className="font-semibold text-slate-700 dark:text-slate-200 text-sm mb-4">Distribusi Keperluan</h2>
           {data && (data.purposeLabels?.length ?? 0) > 0 ? (
             <PurposeChart
