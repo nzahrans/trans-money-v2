@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import StatusBadge from "../../components/StatusBadge";
 import DashboardCard from "../../components/DashboardCard";
-import { FaEdit, FaTrash, FaWallet, FaArrowDown, FaArrowUp } from "react-icons/fa";
+import { FaEdit, FaTrash, FaWallet, FaArrowDown, FaArrowUp, FaTimes } from "react-icons/fa";
 
 type Transaction = {
   id: number;
@@ -23,11 +23,19 @@ type Summary = {
   lastTransactions: Transaction[];
 };
 
+type EditForm = { amount: string; purpose: string; notes: string; recorder: string };
+
 export default function DashboardMain() {
   const router = useRouter();
   const [summary, setSummary] = useState<Summary | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [deletingId, setDeletingId] = useState<number | null>(null);
+  const [editingTrx, setEditingTrx] = useState<Transaction | null>(null);
+  const [editForm, setEditForm] = useState<EditForm>({ amount: "", purpose: "", notes: "", recorder: "" });
+  const [editLoading, setEditLoading] = useState(false);
+  const [editError, setEditError] = useState("");
+  const [refreshKey, setRefreshKey] = useState(0);
 
   useEffect(() => {
     const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
@@ -35,6 +43,7 @@ export default function DashboardMain() {
       router.replace("/auth");
       return;
     }
+    setLoading(true);
     fetch("http://localhost:3001/dashboard/summary", {
       headers: { Authorization: `Bearer ${token}` },
     })
@@ -50,7 +59,49 @@ export default function DashboardMain() {
       })
       .catch((err) => setError(err.message))
       .finally(() => setLoading(false));
-  }, [router]);
+  }, [router, refreshKey]);
+
+  const handleDelete = async (id: number) => {
+    const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
+    try {
+      const res = await fetch(`http://localhost:3001/transaction/${id}`, {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${token ?? ""}` },
+      });
+      if (!res.ok) { const d = await res.json(); throw new Error(d.error || "Hapus gagal"); }
+      setDeletingId(null);
+      setRefreshKey(k => k + 1);
+    } catch (err: any) {
+      setDeletingId(null);
+    }
+  };
+
+  const openEdit = (trx: Transaction) => {
+    setEditingTrx(trx);
+    setEditForm({ amount: String(trx.amount), purpose: trx.purpose, notes: trx.notes ?? "", recorder: trx.recorder ?? "" });
+    setEditError("");
+  };
+
+  const handleEditSave = async () => {
+    if (!editingTrx) return;
+    setEditLoading(true); setEditError("");
+    const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
+    try {
+      const res = await fetch(`http://localhost:3001/transaction/${editingTrx.id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token ?? ""}` },
+        body: JSON.stringify({ amount: Number(editForm.amount), purpose: editForm.purpose, notes: editForm.notes, recorder: editForm.recorder }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Edit gagal");
+      setEditingTrx(null);
+      setRefreshKey(k => k + 1);
+    } catch (err: any) {
+      setEditError(err.message);
+    } finally {
+      setEditLoading(false);
+    }
+  };
 
   if (loading) {
     return (
@@ -139,14 +190,22 @@ export default function DashboardMain() {
               {summary?.lastTransactions.map((trx) => (
                 <tr key={trx.id} className="hover:bg-slate-50 dark:hover:bg-white/5 transition-colors">
                   <td className="px-5 py-3.5">
-                    <div className="flex items-center gap-1">
-                      <button className="p-1.5 rounded-lg text-slate-400 hover:text-violet-600 hover:bg-violet-50 dark:hover:bg-violet-500/10 transition-colors" title="Edit">
-                        <FaEdit size={13} />
-                      </button>
-                      <button className="p-1.5 rounded-lg text-slate-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-500/10 transition-colors" title="Hapus">
-                        <FaTrash size={13} />
-                      </button>
-                    </div>
+                    {deletingId === trx.id ? (
+                      <div className="flex items-center gap-1">
+                        <span className="text-xs text-slate-500 dark:text-slate-400 mr-0.5">Hapus?</span>
+                        <button onClick={() => handleDelete(trx.id)} className="px-2 py-0.5 rounded text-xs font-medium bg-red-500 hover:bg-red-600 text-white transition-colors">Ya</button>
+                        <button onClick={() => setDeletingId(null)} className="px-2 py-0.5 rounded text-xs font-medium bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-300 dark:hover:bg-slate-600 transition-colors">Batal</button>
+                      </div>
+                    ) : (
+                      <div className="flex items-center gap-1">
+                        <button onClick={() => openEdit(trx)} className="p-1.5 rounded-lg text-slate-400 hover:text-violet-600 hover:bg-violet-50 dark:hover:bg-violet-500/10 transition-colors" title="Edit">
+                          <FaEdit size={13} />
+                        </button>
+                        <button onClick={() => setDeletingId(trx.id)} className="p-1.5 rounded-lg text-slate-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-500/10 transition-colors" title="Hapus">
+                          <FaTrash size={13} />
+                        </button>
+                      </div>
+                    )}
                   </td>
                   <td className="px-5 py-3.5 whitespace-nowrap text-xs text-slate-500 dark:text-slate-400">
                     {new Date(trx.createdAt).toLocaleDateString("id-ID", { day: "2-digit", month: "2-digit", year: "numeric" })}
@@ -176,6 +235,47 @@ export default function DashboardMain() {
           </table>
         </div>
       </div>
+
+      {/* Edit Modal */}
+      {editingTrx && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+          <div className="bg-white dark:bg-[#1a1635] rounded-2xl border border-slate-100 dark:border-violet-900/30 shadow-2xl w-full max-w-md mx-4 p-6">
+            <div className="flex items-center justify-between mb-5">
+              <h3 className="font-semibold text-slate-800 dark:text-slate-100">Edit Transaksi</h3>
+              <button onClick={() => setEditingTrx(null)} className="p-1 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-white/10 transition-colors">
+                <FaTimes size={14} />
+              </button>
+            </div>
+            {editError && (
+              <div className="mb-4 p-3 rounded-lg bg-red-50 dark:bg-red-500/10 border border-red-200 dark:border-red-500/20 text-sm text-red-600 dark:text-red-400">{editError}</div>
+            )}
+            <div className="flex flex-col gap-4">
+              <div>
+                <label className="block text-sm font-medium text-slate-600 dark:text-slate-400 mb-1.5">Jumlah (Rp)</label>
+                <input type="number" min={1} className="w-full border border-slate-200 dark:border-violet-700/30 bg-slate-50 dark:bg-[#211c45] px-3 py-2.5 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-violet-500 text-slate-900 dark:text-slate-100" value={editForm.amount} onChange={e => setEditForm(f => ({ ...f, amount: e.target.value }))} />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-slate-600 dark:text-slate-400 mb-1.5">Keperluan</label>
+                <input type="text" className="w-full border border-slate-200 dark:border-violet-700/30 bg-slate-50 dark:bg-[#211c45] px-3 py-2.5 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-violet-500 text-slate-900 dark:text-slate-100" value={editForm.purpose} onChange={e => setEditForm(f => ({ ...f, purpose: e.target.value }))} />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-slate-600 dark:text-slate-400 mb-1.5">Recorder</label>
+                <input type="text" className="w-full border border-slate-200 dark:border-violet-700/30 bg-slate-50 dark:bg-[#211c45] px-3 py-2.5 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-violet-500 text-slate-900 dark:text-slate-100" value={editForm.recorder} onChange={e => setEditForm(f => ({ ...f, recorder: e.target.value }))} />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-slate-600 dark:text-slate-400 mb-1.5">Notes</label>
+                <textarea rows={3} className="w-full border border-slate-200 dark:border-violet-700/30 bg-slate-50 dark:bg-[#211c45] px-3 py-2.5 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-violet-500 text-slate-900 dark:text-slate-100 resize-none" value={editForm.notes} onChange={e => setEditForm(f => ({ ...f, notes: e.target.value }))} />
+              </div>
+              <div className="flex gap-2 pt-1">
+                <button onClick={() => setEditingTrx(null)} className="flex-1 py-2.5 rounded-lg text-sm font-medium border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-white/5 transition-colors">Batal</button>
+                <button onClick={handleEditSave} disabled={editLoading} className="flex-1 py-2.5 rounded-lg text-sm font-semibold text-white bg-gradient-to-r from-indigo-500 to-violet-600 hover:from-indigo-600 hover:to-violet-700 transition-all disabled:opacity-60">
+                  {editLoading ? "Menyimpan..." : "Simpan"}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
