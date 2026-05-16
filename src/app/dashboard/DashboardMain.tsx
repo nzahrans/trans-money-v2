@@ -31,6 +31,7 @@ export default function DashboardMain() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [deletingId, setDeletingId] = useState<number | null>(null);
+  const [deleteError, setDeleteError] = useState("");
   const [editingTrx, setEditingTrx] = useState<Transaction | null>(null);
   const [editForm, setEditForm] = useState<EditForm>({ amount: "", purpose: "", notes: "", recorder: "" });
   const [editLoading, setEditLoading] = useState(false);
@@ -70,9 +71,11 @@ export default function DashboardMain() {
       });
       if (!res.ok) { const d = await res.json(); throw new Error(d.error || "Hapus gagal"); }
       setDeletingId(null);
+      setDeleteError("");
       setRefreshKey(k => k + 1);
     } catch (err: any) {
       setDeletingId(null);
+      setDeleteError(err.message);
     }
   };
 
@@ -164,6 +167,12 @@ export default function DashboardMain() {
       </div>
 
       {/* Recent Activity */}
+      {deleteError && (
+        <div className="p-3 rounded-lg bg-red-50 dark:bg-red-500/10 border border-red-200 dark:border-red-500/20 text-sm text-red-600 dark:text-red-400 flex items-center justify-between gap-2">
+          <div className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-red-500 flex-shrink-0" />{deleteError}</div>
+          <button onClick={() => setDeleteError("")} className="text-red-400 hover:text-red-600 transition-colors text-xs">✕</button>
+        </div>
+      )}
       <div className="bg-white dark:bg-[#161b27] rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm">
         <div className="flex items-center justify-between px-5 py-4 border-b border-slate-100 dark:border-slate-800">
           <h2 className="font-semibold text-slate-800 dark:text-slate-100 text-sm">Recent Activity</h2>
