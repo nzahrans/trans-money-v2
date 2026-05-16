@@ -56,7 +56,7 @@ export default function DashboardMain() {
     return (
       <div className="flex items-center justify-center h-64">
         <div className="flex flex-col items-center gap-3">
-          <svg className="animate-spin h-8 w-8 text-blue-500" fill="none" viewBox="0 0 24 24">
+          <svg className="animate-spin h-8 w-8 text-violet-500" fill="none" viewBox="0 0 24 24">
             <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
             <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
           </svg>
@@ -76,12 +76,18 @@ export default function DashboardMain() {
   }
   return (
     <div className="max-w-6xl mx-auto flex flex-col gap-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <h1 className="text-xl font-bold text-slate-800 dark:text-slate-100">Dashboard</h1>
-        <span className="text-xs text-slate-400 dark:text-slate-500">
-          Last updated: {new Date().toLocaleDateString("id-ID", { day: "2-digit", month: "2-digit", year: "numeric" })}
-        </span>
+      {/* Hero Banner */}
+      <div className="rounded-2xl bg-gradient-to-r from-[#1e1b4b] via-[#2d1b69] to-indigo-800 p-6 flex items-center justify-between shadow-lg shadow-violet-200/40">
+        <div>
+          <p className="text-indigo-300/70 text-xs font-medium uppercase tracking-widest mb-1">Selamat datang</p>
+          <h1 className="text-2xl font-bold text-white">Dashboard</h1>
+          <p className="text-indigo-300/60 text-xs mt-1">
+            Last updated: {new Date().toLocaleDateString("id-ID", { day: "2-digit", month: "2-digit", year: "numeric" })}
+          </p>
+        </div>
+        <div className="w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center">
+          <FaWallet size={22} className="text-white/80" />
+        </div>
       </div>
 
       {/* Stat Cards */}
@@ -107,12 +113,12 @@ export default function DashboardMain() {
       </div>
 
       {/* Recent Activity */}
-      <div className="bg-white dark:bg-[#161b27] rounded-xl border border-slate-200 dark:border-slate-800">
-        <div className="flex items-center justify-between px-5 py-4 border-b border-slate-200 dark:border-slate-800">
+      <div className="bg-white dark:bg-[#161b27] rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm">
+        <div className="flex items-center justify-between px-5 py-4 border-b border-slate-100 dark:border-slate-800">
           <h2 className="font-semibold text-slate-800 dark:text-slate-100 text-sm">Recent Activity</h2>
           <Link
             href="/summary/table"
-            className="text-xs text-blue-600 dark:text-blue-400 hover:underline font-medium"
+            className="text-xs text-violet-600 dark:text-violet-400 hover:underline font-medium"
           >
             View All →
           </Link>
@@ -120,7 +126,7 @@ export default function DashboardMain() {
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="text-xs uppercase tracking-wide text-slate-500 dark:text-slate-400 bg-slate-50 dark:bg-slate-800/50">
+              <tr className="text-xs uppercase tracking-wide text-slate-500 dark:text-slate-400 bg-violet-50/60 dark:bg-slate-800/50">
                 <th className="px-5 py-3 text-left font-medium">Actions</th>
                 <th className="px-5 py-3 text-left font-medium">Date</th>
                 <th className="px-5 py-3 text-left font-medium">Type</th>
@@ -134,7 +140,7 @@ export default function DashboardMain() {
                 <tr key={trx.id} className="hover:bg-slate-50 dark:hover:bg-white/5 transition-colors">
                   <td className="px-5 py-3.5">
                     <div className="flex items-center gap-1">
-                      <button className="p-1.5 rounded-lg text-slate-400 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-500/10 transition-colors" title="Edit">
+                      <button className="p-1.5 rounded-lg text-slate-400 hover:text-violet-600 hover:bg-violet-50 dark:hover:bg-violet-500/10 transition-colors" title="Edit">
                         <FaEdit size={13} />
                       </button>
                       <button className="p-1.5 rounded-lg text-slate-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-500/10 transition-colors" title="Hapus">
