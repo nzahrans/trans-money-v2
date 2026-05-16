@@ -15,13 +15,13 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
 		<div className="flex min-h-screen">
 			<Sidebar />
 			<div className="flex-1 ml-60 flex flex-col min-h-screen">
-				<header className="h-14 flex items-center justify-between px-6 border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-[#161b27] sticky top-0 z-20 shadow-sm">
-					<span className="text-sm font-medium text-slate-700 dark:text-slate-200">
+			<header className="h-14 flex items-center justify-between px-6 border-b-2 border-slate-200 dark:border-white/[0.10] bg-white dark:bg-[#1e1b4b] sticky top-0 z-20 shadow-sm">
+				<span className="text-sm font-semibold text-slate-600 dark:text-indigo-200/80">
 						Trans Kota Kita Money Management
 					</span>
 					<ThemeToggle />
 				</header>
-				<main className="flex-1 p-6 bg-slate-100 dark:bg-[#0d1117]">
+				<main className="flex-1 p-6 bg-gradient-to-br from-slate-50 via-white to-violet-50/30 dark:from-[#0d1117] dark:via-[#0d1117] dark:to-[#130d2a]">
 					{children}
 				</main>
 			</div>
