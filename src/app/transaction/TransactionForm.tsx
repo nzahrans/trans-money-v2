@@ -155,10 +155,6 @@ export default function TransactionForm() {
   );
 }
 
-
-export default function TransactionForm() {
-  const router = useRouter();
-  const [type, setType] = useState<'deposit' | 'withdraw'>('deposit');
   const [amount, setAmount] = useState("");
   const [purpose, setPurpose] = useState("");
   const [notes, setNotes] = useState("");
