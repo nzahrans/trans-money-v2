@@ -75,8 +75,9 @@ export default function WithdrawForm() {
 	};
 
 	return (
-		<div className="max-w-6xl mx-auto flex flex-col gap-6">
-			<h1 className="text-xl font-bold text-slate-800 dark:text-slate-100">Withdraw</h1>
+		<div className="flex flex-col items-center gap-6 w-full">
+			<div className="w-full max-w-6xl">
+			<h1 className="text-xl font-bold text-slate-800 dark:text-slate-100 mb-4 text-center">Withdraw</h1>
 			<div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
 				{/* Form */}
 				<div className="lg:col-span-2">
@@ -176,35 +177,35 @@ export default function WithdrawForm() {
 				</div>
 
 				{/* Tax Calculator */}
-				<div className="bg-white dark:bg-[#161b27] rounded-xl border border-slate-200 dark:border-slate-800 p-5">
+				<div className="bg-white dark:bg-[#161b27] rounded-xl border border-slate-200 dark:border-slate-800 p-5 flex flex-col items-center text-center">
 					<div className="flex items-center gap-2 mb-4">
 						<FaCalculator className="text-blue-500" size={16} />
 						<h3 className="font-semibold text-slate-800 dark:text-slate-100 text-sm">Tax Calculator</h3>
 					</div>
-					<div className="flex flex-col gap-3">
+					<div className="flex flex-col gap-3 w-full items-center">
 						<div>
 							<p className="text-xs text-slate-500 dark:text-slate-400 mb-0.5">Current Balance</p>
 							<p className="font-bold text-slate-800 dark:text-slate-100">
 								Rp {currentBalance.toLocaleString("id-ID")}
 							</p>
 						</div>
-						<div className="border-t border-slate-100 dark:border-slate-800 pt-3">
+						<div className="border-t border-slate-100 dark:border-slate-800 pt-3 w-full">
 							<p className="text-xs text-slate-500 dark:text-slate-400 mb-0.5">Tax Amount (0.5%)</p>
-							<div className="flex items-center gap-2">
+							<div className="flex items-center justify-center gap-2">
 								<p className="font-bold text-sky-500">Rp {taxAmount.toLocaleString("id-ID")}</p>
 								<button
 									type="button"
 									onClick={handleCopy}
-									className="p-1 rounded text-slate-400 hover:text-sky-500 transition-colors"
-									title="Copy tax amount"
+									className="ml-auto px-2.5 py-1 rounded text-xs font-medium bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-sky-100 dark:hover:bg-sky-500/10 hover:text-sky-600 transition-colors flex items-center gap-1"
 								>
-									<FaCopy size={12} />
+									<FaCopy size={10} />
+									{copied ? "Copied!" : "Copy"}
 								</button>
-								{copied && <span className="text-xs text-emerald-500">Copied!</span>}
 							</div>
 						</div>
 					</div>
 				</div>
+			</div>
 			</div>
 		</div>
 	);

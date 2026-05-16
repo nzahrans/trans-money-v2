@@ -59,9 +59,10 @@ export default function DepositForm() {
 	};
 
 	return (
-		<div className="max-w-6xl mx-auto flex flex-col gap-6">
-			<h1 className="text-xl font-bold text-slate-800 dark:text-slate-100">Deposit</h1>
-			<div className="max-w-2xl">
+		<div className="flex flex-col items-center gap-6 w-full">
+			<div className="w-full max-w-5xl">
+			<h1 className="text-xl font-bold text-slate-800 dark:text-slate-100 mb-4 text-center">Deposit</h1>
+			<div className="w-full">
 				<div className="bg-white dark:bg-[#161b27] rounded-xl border border-slate-200 dark:border-slate-800">
 					<form onSubmit={handleSubmit} className="p-6 flex flex-col gap-5">
 						{error && (
@@ -155,6 +156,7 @@ export default function DepositForm() {
 						</button>
 					</form>
 				</div>
+			</div>
 			</div>
 		</div>
 	);
