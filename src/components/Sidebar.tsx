@@ -11,6 +11,8 @@ import {
   FaArrowUp,
   FaChevronDown,
   FaChartLine,
+  FaDownload,
+  FaHistory,
 } from "react-icons/fa";
 
 export default function Sidebar() {
@@ -117,6 +119,10 @@ export default function Sidebar() {
             })}
           </div>
         )}
+
+        <p className="px-3 py-2 mt-2 text-[10px] font-semibold text-slate-400 dark:text-indigo-300/40 uppercase tracking-widest">Tools</p>
+        {navLink("/export", "Export Data", <FaDownload size={14} />)}
+        {navLink("/auditlog", "Audit Log", <FaHistory size={14} />)}
       </nav>
 
       {/* Bottom */}
