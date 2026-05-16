@@ -6,6 +6,8 @@ export default function ExportPanel() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
 
   const handleExport = async () => {
     setLoading(true);
@@ -16,7 +18,11 @@ export default function ExportPanel() {
       return;
     }
     try {
-      const res = await fetch("http://localhost:3001/transaction/export/csv", {
+      const params = new URLSearchParams();
+      if (startDate) params.set("startDate", startDate);
+      if (endDate) params.set("endDate", endDate);
+      const query = params.toString() ? `?${params.toString()}` : "";
+      const res = await fetch(`http://localhost:3001/transaction/export/csv${query}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       if (!res.ok) {
@@ -56,9 +62,43 @@ export default function ExportPanel() {
             <div>
               <h2 className="font-semibold text-slate-800 dark:text-slate-200">Export ke CSV</h2>
               <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5 leading-relaxed">
-                Ekspor semua data transaksi dalam format CSV. File akan otomatis terunduh ke perangkat Anda.
+                Ekspor data transaksi dalam format CSV. Kosongkan filter tanggal untuk ekspor semua data.
               </p>
             </div>
+          </div>
+
+          {/* Filter Tanggal */}
+          <div className="flex flex-col gap-3 mb-5 p-4 rounded-xl bg-slate-50 dark:bg-[#211c45] border border-slate-100 dark:border-violet-900/20">
+            <p className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide">Filter Rentang Tanggal</p>
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <label className="block text-xs text-slate-500 dark:text-slate-400 mb-1">Dari</label>
+                <input
+                  type="date"
+                  className="w-full border border-slate-200 dark:border-violet-700/30 bg-white dark:bg-[#1a1635] px-3 py-2 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-violet-500 text-slate-900 dark:text-slate-100"
+                  value={startDate}
+                  onChange={e => setStartDate(e.target.value)}
+                />
+              </div>
+              <div>
+                <label className="block text-xs text-slate-500 dark:text-slate-400 mb-1">Sampai</label>
+                <input
+                  type="date"
+                  className="w-full border border-slate-200 dark:border-violet-700/30 bg-white dark:bg-[#1a1635] px-3 py-2 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-violet-500 text-slate-900 dark:text-slate-100"
+                  value={endDate}
+                  onChange={e => setEndDate(e.target.value)}
+                />
+              </div>
+            </div>
+            {(startDate || endDate) && (
+              <button
+                type="button"
+                onClick={() => { setStartDate(""); setEndDate(""); }}
+                className="text-xs text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 self-end transition-colors"
+              >
+                Reset filter
+              </button>
+            )}
           </div>
           {error && (
             <div className="mb-4 p-3 rounded-lg bg-red-50 dark:bg-red-500/10 border border-red-200 dark:border-red-500/20 text-sm text-red-600 dark:text-red-400 flex items-center gap-2">
