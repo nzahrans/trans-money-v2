@@ -6,6 +6,7 @@ type AuditLog = {
   id: number;
   action: string;
   userId: number;
+  createdAt?: string;
 };
 
 export default function AuditLogTable() {
@@ -39,7 +40,7 @@ export default function AuditLogTable() {
     return (
       <div className="flex items-center justify-center h-64">
         <div className="flex flex-col items-center gap-3">
-          <svg className="animate-spin h-8 w-8 text-blue-500" fill="none" viewBox="0 0 24 24">
+          <svg className="animate-spin h-8 w-8 text-violet-500" fill="none" viewBox="0 0 24 24">
             <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
             <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
           </svg>
@@ -60,30 +61,36 @@ export default function AuditLogTable() {
   return (
     <div className="max-w-6xl mx-auto flex flex-col gap-6">
       <div>
-        <h1 className="text-xl font-bold text-slate-800 dark:text-slate-100">Audit Log</h1>
+        <h1 className="text-2xl font-bold bg-gradient-to-r from-violet-600 to-indigo-600 bg-clip-text text-transparent">Audit Log</h1>
         <p className="text-sm text-slate-500 dark:text-slate-400 mt-0.5">Rekam aktivitas sistem</p>
       </div>
-      <div className="bg-white dark:bg-[#161b27] rounded-xl border border-slate-200 dark:border-slate-800">
+      <div className="bg-white dark:bg-[#1a1635] rounded-2xl border border-slate-100 dark:border-violet-900/30 shadow-sm">
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="text-xs uppercase tracking-wide text-slate-500 dark:text-slate-400 bg-slate-50 dark:bg-slate-800/50 border-b border-slate-200 dark:border-slate-800">
+              <tr className="text-xs uppercase tracking-wide text-slate-500 dark:text-slate-400 bg-violet-50/60 dark:bg-violet-900/20">
                 <th className="px-5 py-3 text-left font-medium w-16">ID</th>
+                <th className="px-5 py-3 text-left font-medium">Waktu</th>
                 <th className="px-5 py-3 text-left font-medium">Aksi</th>
                 <th className="px-5 py-3 text-right font-medium w-24">User ID</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
+            <tbody className="divide-y divide-slate-100 dark:divide-violet-900/20">
               {logs.map((log) => (
-                <tr key={log.id} className="hover:bg-slate-50 dark:hover:bg-white/5 transition-colors">
+                <tr key={log.id} className="hover:bg-violet-50/40 dark:hover:bg-violet-900/10 transition-colors">
                   <td className="px-5 py-3.5 text-slate-400 dark:text-slate-500 tabular-nums">{log.id}</td>
+                  <td className="px-5 py-3.5 text-xs text-slate-500 dark:text-slate-400 whitespace-nowrap">
+                    {log.createdAt
+                      ? new Date(log.createdAt).toLocaleString("id-ID", { day: "2-digit", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" })
+                      : <span className="italic text-slate-300 dark:text-slate-600">—</span>}
+                  </td>
                   <td className="px-5 py-3.5 font-mono text-xs text-slate-700 dark:text-slate-300">{log.action}</td>
                   <td className="px-5 py-3.5 text-right text-slate-600 dark:text-slate-400 tabular-nums">{log.userId}</td>
                 </tr>
               ))}
               {logs.length === 0 && (
                 <tr>
-                  <td colSpan={3} className="px-5 py-12 text-center text-slate-400 dark:text-slate-500 text-sm">
+                  <td colSpan={4} className="px-5 py-12 text-center text-slate-400 dark:text-slate-500 text-sm">
                     Tidak ada log aktivitas
                   </td>
                 </tr>
