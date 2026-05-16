@@ -1,10 +1,9 @@
 "use client";
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import {
   FaChartBar,
-  FaSignOutAlt,
   FaTable,
   FaWallet,
   FaArrowDown,
@@ -17,19 +16,11 @@ import {
 
 export default function Sidebar() {
   const pathname = usePathname();
-  const router = useRouter();
   const [summaryOpen, setSummaryOpen] = useState(false);
 
   useEffect(() => {
     if (pathname.startsWith("/summary")) setSummaryOpen(true);
   }, [pathname]);
-
-  const handleLogout = () => {
-    if (typeof window !== "undefined") {
-      localStorage.removeItem("token");
-      router.replace("/auth");
-    }
-  };
 
   const navLink = (href: string, label: string, icon: React.ReactNode, exact = false) => {
     const active = exact
@@ -124,17 +115,6 @@ export default function Sidebar() {
         {navLink("/export", "Export Data", <FaDownload size={14} />)}
         {navLink("/auditlog", "Audit Log", <FaHistory size={14} />)}
       </nav>
-
-      {/* Bottom */}
-      <div className="px-3 pb-4 pt-2 border-t border-slate-200/80 dark:border-white/[0.08]">
-        <button
-          onClick={handleLogout}
-          className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl font-medium text-sm text-rose-500 dark:text-rose-300/70 hover:bg-rose-50 dark:hover:bg-rose-500/10 hover:text-rose-600 dark:hover:text-rose-300 transition-all"
-        >
-          <FaSignOutAlt size={15} className="text-rose-400 dark:text-rose-400/50" />
-          Logout
-        </button>
-      </div>
     </aside>
   );
 }
