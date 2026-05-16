@@ -78,47 +78,98 @@ export default function DashboardMain() {
     <div className="max-w-6xl mx-auto flex flex-col gap-6">
       {/* Header */}
       <div className="flex items-center justify-between">
-        <div>
-          <div className="flex items-baseline gap-3 flex-wrap">
-            <h1 className="text-xl font-bold text-slate-800 dark:text-slate-100">Dashboard</h1>
-            <span className="text-xs text-slate-400 dark:text-slate-500">
-              Last updated: {new Date().toLocaleDateString("id-ID", { day: "2-digit", month: "2-digit", year: "numeric" })}
-            </span>
-          </div>
-          <p className="text-sm text-slate-500 dark:text-slate-400 mt-0.5">
-            {new Date().toLocaleDateString("id-ID", { weekday: "long", year: "numeric", month: "long", day: "numeric" })}
-          </p>
-        </div>
-        <Link
-          href="/deposit"
-          className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold rounded-lg transition-colors shadow-sm"
-        >
-          + Transaksi Baru
-        </Link>
+        <h1 className="text-xl font-bold text-slate-800 dark:text-slate-100">Dashboard</h1>
+        <span className="text-xs text-slate-400 dark:text-slate-500">
+          Last updated: {new Date().toLocaleDateString("id-ID", { day: "2-digit", month: "2-digit", year: "numeric" })}
+        </span>
       </div>
 
       {/* Stat Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <DashboardCard
           icon={<FaWallet />}
-          label="Total Saldo"
-          value={`Rp ${summary?.saldo.toLocaleString("id-ID")}`}
+          label="Total Balance"
+          value={`Rp ${(summary?.saldo ?? 0).toLocaleString("id-ID")}`}
           color="blue"
         />
         <DashboardCard
           icon={<FaArrowDown />}
-          label="Total Deposit"
-          value={`Rp ${summary?.totalDeposit.toLocaleString("id-ID")}`}
+          label="Total Deposits"
+          value={`Rp ${(summary?.totalDeposit ?? 0).toLocaleString("id-ID")}`}
           color="green"
         />
         <DashboardCard
           icon={<FaArrowUp />}
-          label="Total Withdraw"
-          value={`Rp ${summary?.totalWithdraw.toLocaleString("id-ID")}`}
+          label="Total Withdrawals"
+          value={`Rp ${(summary?.totalWithdraw ?? 0).toLocaleString("id-ID")}`}
           color="red"
         />
       </div>
-      {/* ...tambahkan logic transaksi terakhir jika perlu... */}
+
+      {/* Recent Activity */}
+      <div className="bg-white dark:bg-[#161b27] rounded-xl border border-slate-200 dark:border-slate-800">
+        <div className="flex items-center justify-between px-5 py-4 border-b border-slate-200 dark:border-slate-800">
+          <h2 className="font-semibold text-slate-800 dark:text-slate-100 text-sm">Recent Activity</h2>
+          <Link
+            href="/summary/table"
+            className="text-xs text-blue-600 dark:text-blue-400 hover:underline font-medium"
+          >
+            View All →
+          </Link>
+        </div>
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="text-xs uppercase tracking-wide text-slate-500 dark:text-slate-400 bg-slate-50 dark:bg-slate-800/50">
+                <th className="px-5 py-3 text-left font-medium">Actions</th>
+                <th className="px-5 py-3 text-left font-medium">Date</th>
+                <th className="px-5 py-3 text-left font-medium">Type</th>
+                <th className="px-5 py-3 text-right font-medium">Amount</th>
+                <th className="px-5 py-3 text-left font-medium">Recorder</th>
+                <th className="px-5 py-3 text-left font-medium">Purpose</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
+              {summary?.lastTransactions.map((trx) => (
+                <tr key={trx.id} className="hover:bg-slate-50 dark:hover:bg-white/5 transition-colors">
+                  <td className="px-5 py-3.5">
+                    <div className="flex items-center gap-1">
+                      <button className="p-1.5 rounded-lg text-slate-400 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-500/10 transition-colors" title="Edit">
+                        <FaEdit size={13} />
+                      </button>
+                      <button className="p-1.5 rounded-lg text-slate-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-500/10 transition-colors" title="Hapus">
+                        <FaTrash size={13} />
+                      </button>
+                    </div>
+                  </td>
+                  <td className="px-5 py-3.5 whitespace-nowrap text-xs text-slate-500 dark:text-slate-400">
+                    {new Date(trx.createdAt).toLocaleDateString("id-ID", { day: "2-digit", month: "2-digit", year: "numeric" })}
+                  </td>
+                  <td className="px-5 py-3.5">
+                    <StatusBadge type={trx.type} />
+                  </td>
+                  <td className={`px-5 py-3.5 text-right font-semibold tabular-nums ${
+                    trx.type === "deposit" ? "text-emerald-600 dark:text-emerald-400" : "text-red-600 dark:text-red-400"
+                  }`}>
+                    Rp {trx.amount.toLocaleString("id-ID")}
+                  </td>
+                  <td className="px-5 py-3.5 text-slate-600 dark:text-slate-300 text-xs">
+                    {trx.recorder || <span className="text-slate-300 dark:text-slate-600 italic">—</span>}
+                  </td>
+                  <td className="px-5 py-3.5 text-slate-800 dark:text-slate-200 font-medium">{trx.purpose}</td>
+                </tr>
+              ))}
+              {(!summary?.lastTransactions || summary.lastTransactions.length === 0) && (
+                <tr>
+                  <td colSpan={6} className="px-5 py-12 text-center text-slate-400 dark:text-slate-500 text-sm">
+                    Belum ada transaksi
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
   );
 }
