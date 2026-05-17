@@ -134,14 +134,14 @@ export default function SummaryTable() {
         <table className="w-full text-sm">
           <thead>
             <tr className="text-xs uppercase tracking-wide text-slate-500 dark:text-slate-400 bg-sky-50/60 dark:bg-sky-900/20">
-              <th className="px-5 py-3 text-left font-medium">Aksi</th>
               <th className="px-5 py-3 text-left font-medium">Tanggal</th>
-              <th className="px-5 py-3 text-left font-medium">Keperluan</th>
               <th className="px-5 py-3 text-left font-medium">Tipe</th>
-              <th className="px-5 py-3 text-right font-medium">Jumlah</th>
+              <th className="px-5 py-3 text-left font-medium">Jumlah</th>
+              <th className="px-5 py-3 text-left font-medium">Petugas</th>
+              <th className="px-5 py-3 text-left font-medium">Keperluan</th>
             </tr>
           </thead>
-          <tbody><TableSkeleton cols={5} rows={8} /></tbody>
+          <tbody><TableSkeleton cols={7} rows={8} /></tbody>
         </table>
       </div>
     </div>
@@ -185,40 +185,40 @@ export default function SummaryTable() {
         <table className="w-full text-sm">
           <thead>
             <tr className="text-xs uppercase tracking-wide text-slate-500 dark:text-slate-400 bg-sky-50/60 dark:bg-sky-900/20">
-              <th className="px-5 py-3 text-left font-medium">Aksi</th>
               <th className="px-5 py-3 text-left font-medium">Tanggal</th>
-              <th className="px-5 py-3 text-left font-medium">Keperluan</th>
-              <th className="px-5 py-3 text-left font-medium hidden lg:table-cell">Petugas</th>
               <th className="px-5 py-3 text-left font-medium">Tipe</th>
-              <th className="px-5 py-3 text-right font-medium">Jumlah</th>
-              <th className="px-5 py-3 text-left font-medium hidden md:table-cell">Notes</th>
+              <th className="px-5 py-3 text-left font-medium">Jumlah</th>
+              <th className="px-5 py-3 text-left font-medium hidden lg:table-cell">Petugas</th>
+              <th className="px-5 py-3 text-left font-medium">Keperluan</th>
+              <th className="px-5 py-3 text-left font-medium hidden lg:table-cell">Notes</th>
+              <th className="px-5 py-3 text-center font-medium">Aksi</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-100 dark:divide-sky-900/20">
             {filtered.map(trx => (
               <tr key={trx.id} className="hover:bg-sky-50/40 dark:hover:bg-sky-900/10 transition-colors">
-                <td className="px-5 py-3.5">
-                  {(
-                    <div className="flex items-center gap-1">
-                      <button onClick={() => openEdit(trx)} className="p-1.5 rounded-lg text-slate-400 hover:text-sky-600 hover:bg-sky-50 dark:hover:bg-sky-500/10 transition-colors" title="Edit"><FaEdit size={13} /></button>
-                      <button onClick={() => setDeletingId(trx.id)} className="p-1.5 rounded-lg text-slate-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-500/10 transition-colors" title="Hapus"><FaTrash size={13} /></button>
-                    </div>
-                  )}
-                </td>
                 <td className="px-5 py-3.5 whitespace-nowrap text-sm text-slate-500 dark:text-slate-400">
                   {new Date(trx.transactionDate || trx.createdAt).toLocaleDateString("id-ID", { day: "2-digit", month: "short", year: "numeric", timeZone: "UTC" })}
                   {!trx.transactionDate && <span className="ml-1 text-xs text-slate-300 dark:text-slate-600">(input)</span>}
                 </td>
-                <td className="px-5 py-3.5 text-slate-800 dark:text-slate-100 font-medium">{trx.purpose}</td>
+                <td className="px-5 py-3.5"><StatusBadge type={trx.type} /></td>
+                <td className={`px-5 py-3.5 text-left font-semibold tabular-nums ${trx.type === "deposit" ? "text-emerald-600 dark:text-emerald-400" : "text-rose-600 dark:text-rose-400"}`}>
+                  {trx.type === "withdraw" ? "−" : "+"}Rp {trx.amount.toLocaleString("id-ID")}
+                </td>
                 <td className="px-5 py-3.5 text-slate-600 dark:text-slate-300 text-sm hidden lg:table-cell">
                   {trx.recorder || <span className="text-slate-300 dark:text-slate-600 italic">—</span>}
                 </td>
-                <td className="px-5 py-3.5"><StatusBadge type={trx.type} /></td>
-                <td className={`px-5 py-3.5 text-right font-semibold tabular-nums ${trx.type === "deposit" ? "text-emerald-600 dark:text-emerald-400" : "text-rose-600 dark:text-rose-400"}`}>
-                  {trx.type === "withdraw" ? "−" : "+"}Rp {trx.amount.toLocaleString("id-ID")}
-                </td>
-                <td className="px-5 py-3.5 text-sm text-slate-400 dark:text-slate-500 max-w-[200px] truncate hidden md:table-cell">
+                <td className="px-5 py-3.5 text-slate-800 dark:text-slate-100 font-medium">{trx.purpose}</td>
+                <td className="px-5 py-3.5 text-sm text-slate-400 dark:text-slate-500 max-w-[200px] truncate hidden lg:table-cell">
                   {trx.notes || <span className="italic">—</span>}
+                </td>
+                <td className="px-5 py-3.5">
+                  {
+                    <div className="flex items-center justify-center gap-1">
+                      <button onClick={() => openEdit(trx)} className="p-1.5 rounded-lg text-slate-400 hover:text-sky-600 hover:bg-sky-50 dark:hover:bg-sky-500/10 transition-colors" title="Edit"><FaEdit size={13} /></button>
+                      <button onClick={() => setDeletingId(trx.id)} className="p-1.5 rounded-lg text-slate-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-500/10 transition-colors" title="Hapus"><FaTrash size={13} /></button>
+                    </div>
+                  }
                 </td>
               </tr>
             ))}

@@ -208,19 +208,39 @@ export default function DashboardMain() {
           <table className="w-full text-sm">
             <thead>
               <tr className="text-xs uppercase tracking-wide text-slate-500 dark:text-slate-400 bg-sky-50/60 dark:bg-sky-900/20">
-                <th className="px-5 py-3 text-left font-medium">Actions</th>
-                <th className="px-5 py-3 text-left font-medium">Date</th>
-                <th className="px-5 py-3 text-left font-medium">Type</th>
-                <th className="px-5 py-3 text-right font-medium">Amount</th>
+                <th className="px-5 py-3 text-left font-medium">Tanggal</th>
+                <th className="px-5 py-3 text-left font-medium">Tipe</th>
+                <th className="px-5 py-3 text-left font-medium">Jumlah</th>
                 <th className="px-5 py-3 text-left font-medium hidden lg:table-cell">Petugas</th>
-                <th className="px-5 py-3 text-left font-medium hidden md:table-cell">Purpose</th>
+                <th className="px-5 py-3 text-left font-medium">Keperluan</th>
+                <th className="px-5 py-3 text-left font-medium hidden lg:table-cell">Notes</th>
+                <th className="px-5 py-3 text-center font-medium">Aksi</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 dark:divide-sky-900/20">
               {summary?.lastTransactions.map((trx) => (
                 <tr key={trx.id} className="hover:bg-sky-50/30 dark:hover:bg-sky-900/10 transition-colors">
+                  <td className="px-5 py-3.5 whitespace-nowrap text-sm text-slate-500 dark:text-slate-400">
+                    {new Date(trx.transactionDate || trx.createdAt).toLocaleDateString("id-ID", { day: "2-digit", month: "2-digit", year: "numeric", timeZone: "UTC" })}
+                    {!trx.transactionDate && <span className="ml-1 text-xs text-slate-300 dark:text-slate-600">(input)</span>}
+                  </td>
                   <td className="px-5 py-3.5">
-                    <div className="flex items-center gap-1">
+                    <StatusBadge type={trx.type} />
+                  </td>
+                  <td className={`px-5 py-3.5 text-left font-semibold tabular-nums ${
+                    trx.type === "deposit" ? "text-emerald-600 dark:text-emerald-400" : "text-red-600 dark:text-red-400"
+                  }`}>
+                    Rp {trx.amount.toLocaleString("id-ID")}
+                  </td>
+                  <td className="px-5 py-3.5 text-slate-600 dark:text-slate-300 text-sm hidden lg:table-cell">
+                    {trx.recorder || <span className="text-slate-300 dark:text-slate-600 italic">—</span>}
+                  </td>
+                  <td className="px-5 py-3.5 text-slate-800 dark:text-slate-200 font-medium">{trx.purpose}</td>
+                  <td className="px-5 py-3.5 text-sm text-slate-400 dark:text-slate-500 max-w-[200px] truncate hidden lg:table-cell">
+                    {trx.notes || <span className="italic">—</span>}
+                  </td>
+                  <td className="px-5 py-3.5">
+                    <div className="flex items-center justify-center gap-1">
                       <button onClick={() => openEdit(trx)} className="p-1.5 rounded-lg text-slate-400 hover:text-sky-600 hover:bg-sky-50 dark:hover:bg-sky-500/10 transition-colors" title="Edit">
                         <FaEdit size={13} />
                       </button>
@@ -229,27 +249,11 @@ export default function DashboardMain() {
                       </button>
                     </div>
                   </td>
-                  <td className="px-5 py-3.5 whitespace-nowrap text-sm text-slate-500 dark:text-slate-400">
-                    {new Date(trx.transactionDate || trx.createdAt).toLocaleDateString("id-ID", { day: "2-digit", month: "2-digit", year: "numeric", timeZone: "UTC" })}
-                    {!trx.transactionDate && <span className="ml-1 text-xs text-slate-300 dark:text-slate-600">(input)</span>}
-                  </td>
-                  <td className="px-5 py-3.5">
-                    <StatusBadge type={trx.type} />
-                  </td>
-                  <td className={`px-5 py-3.5 text-right font-semibold tabular-nums ${
-                    trx.type === "deposit" ? "text-emerald-600 dark:text-emerald-400" : "text-red-600 dark:text-red-400"
-                  }`}>
-                    Rp {trx.amount.toLocaleString("id-ID")}
-                  </td>
-                  <td className="px-5 py-3.5 text-slate-600 dark:text-slate-300 text-sm hidden lg:table-cell">
-                    {trx.recorder || <span className="text-slate-300 dark:text-slate-600 italic">—</span>}
-                  </td>
-                  <td className="px-5 py-3.5 text-slate-800 dark:text-slate-200 font-medium hidden md:table-cell">{trx.purpose}</td>
                 </tr>
               ))}
               {(!summary?.lastTransactions || summary.lastTransactions.length === 0) && (
                 <tr>
-                  <td colSpan={6} className="px-5 py-12 text-center text-slate-400 dark:text-slate-500 text-sm">
+                  <td colSpan={7} className="px-5 py-12 text-center text-slate-400 dark:text-slate-500 text-sm">
                     Belum ada transaksi
                   </td>
                 </tr>

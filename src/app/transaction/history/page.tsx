@@ -178,10 +178,11 @@ export default function TransactionHistoryPage() {
             <thead>
               <tr className="text-xs uppercase tracking-wide text-slate-500 dark:text-slate-400 bg-sky-50/60 dark:bg-sky-900/20">
                 <th className="px-5 py-3 text-left font-medium">Tanggal</th>
-                <th className="px-5 py-3 text-left font-medium">Keperluan</th>
-                <th className="px-5 py-3 text-left font-medium hidden md:table-cell">Catatan</th>
                 <th className="px-5 py-3 text-left font-medium">Tipe</th>
-                <th className="px-5 py-3 text-right font-medium">Jumlah</th>
+                <th className="px-5 py-3 text-left font-medium">Jumlah</th>
+                <th className="px-5 py-3 text-left font-medium hidden lg:table-cell">Petugas</th>
+                <th className="px-5 py-3 text-left font-medium">Keperluan</th>
+                <th className="px-5 py-3 text-left font-medium hidden lg:table-cell">Notes</th>
                 <th className="px-5 py-3 text-center font-medium">Aksi</th>
               </tr>
             </thead>
@@ -192,13 +193,16 @@ export default function TransactionHistoryPage() {
                     {new Date(trx.transactionDate || trx.createdAt).toLocaleDateString("id-ID", { day: "2-digit", month: "short", year: "numeric", timeZone: "UTC" })}
                     {!trx.transactionDate && <span className="ml-1 text-xs text-slate-300 dark:text-slate-600">(input)</span>}
                   </td>
-                  <td className="px-5 py-3.5 text-slate-800 dark:text-slate-200 font-medium">{trx.purpose}</td>
-                  <td className="px-5 py-3.5 text-slate-500 dark:text-slate-400 text-sm max-w-[160px] truncate hidden md:table-cell">
-                    {trx.notes || <span className="italic text-slate-300 dark:text-slate-600">—</span>}
-                  </td>
                   <td className="px-5 py-3.5"><StatusBadge type={trx.type} /></td>
-                  <td className={`px-5 py-3.5 text-right font-semibold tabular-nums ${trx.type === "deposit" ? "text-emerald-600 dark:text-emerald-400" : "text-red-600 dark:text-red-400"}`}>
+                  <td className={`px-5 py-3.5 text-left font-semibold tabular-nums ${trx.type === "deposit" ? "text-emerald-600 dark:text-emerald-400" : "text-red-600 dark:text-red-400"}`}>
                     {trx.type === "withdraw" ? "−" : "+"}Rp {trx.amount.toLocaleString("id-ID")}
+                  </td>
+                  <td className="px-5 py-3.5 text-slate-600 dark:text-slate-300 text-sm hidden lg:table-cell">
+                    {trx.recorder || <span className="text-slate-300 dark:text-slate-600 italic">—</span>}
+                  </td>
+                  <td className="px-5 py-3.5 text-slate-800 dark:text-slate-200 font-medium">{trx.purpose}</td>
+                  <td className="px-5 py-3.5 text-slate-500 dark:text-slate-400 text-sm max-w-[200px] truncate hidden lg:table-cell">
+                    {trx.notes || <span className="italic text-slate-300 dark:text-slate-600">—</span>}
                   </td>
                   <td className="px-5 py-3.5">
                     <div className="flex items-center justify-center gap-1">
@@ -210,7 +214,7 @@ export default function TransactionHistoryPage() {
               ))}
               {history.length === 0 && (
                 <tr>
-                  <td colSpan={6} className="px-5 py-12 text-center text-slate-400 dark:text-slate-500 text-sm">Belum ada riwayat transaksi</td>
+                  <td colSpan={7} className="px-5 py-12 text-center text-slate-400 dark:text-slate-500 text-sm">Belum ada riwayat transaksi</td>
                 </tr>
               )}
             </tbody>
