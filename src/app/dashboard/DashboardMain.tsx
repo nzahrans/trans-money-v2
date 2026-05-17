@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import StatusBadge from "../../components/StatusBadge";
 import DashboardCard from "../../components/DashboardCard";
+import ConfirmModal from "../../components/ConfirmModal";
 import { FaEdit, FaTrash, FaWallet, FaArrowDown, FaArrowUp, FaTimes } from "react-icons/fa";
 
 type Transaction = {
@@ -46,6 +47,7 @@ export default function DashboardMain() {
   const [error, setError] = useState("");
   const [deletingId, setDeletingId] = useState<number | null>(null);
   const [deleteError, setDeleteError] = useState("");
+  const [deleteLoading, setDeleteLoading] = useState(false);
   const [editingTrx, setEditingTrx] = useState<Transaction | null>(null);
   const [editForm, setEditForm] = useState<EditForm>({ amount: "", purpose: "", notes: "", recorder: "", transactionDate: "" });
   const [editLoading, setEditLoading] = useState(false);
@@ -78,6 +80,7 @@ export default function DashboardMain() {
   }, [router, refreshKey]);
 
   const handleDelete = async (id: number) => {
+    setDeleteLoading(true);
     const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
     try {
       const res = await fetch(`http://localhost:3001/transaction/${id}`, {
@@ -91,6 +94,8 @@ export default function DashboardMain() {
     } catch (err: any) {
       setDeletingId(null);
       setDeleteError(err.message);
+    } finally {
+      setDeleteLoading(false);
     }
   };
 
@@ -214,22 +219,14 @@ export default function DashboardMain() {
               {summary?.lastTransactions.map((trx) => (
                 <tr key={trx.id} className="hover:bg-sky-50/30 dark:hover:bg-sky-900/10 transition-colors">
                   <td className="px-5 py-3.5">
-                    {deletingId === trx.id ? (
-                      <div className="flex items-center gap-1">
-                        <span className="text-xs text-slate-500 dark:text-slate-400 mr-0.5">Hapus?</span>
-                        <button onClick={() => handleDelete(trx.id)} className="px-2 py-0.5 rounded text-xs font-medium bg-red-500 hover:bg-red-600 text-white transition-colors">Ya</button>
-                        <button onClick={() => setDeletingId(null)} className="px-2 py-0.5 rounded text-xs font-medium bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-300 dark:hover:bg-slate-600 transition-colors">Batal</button>
-                      </div>
-                    ) : (
-                      <div className="flex items-center gap-1">
-                        <button onClick={() => openEdit(trx)} className="p-1.5 rounded-lg text-slate-400 hover:text-sky-600 hover:bg-sky-50 dark:hover:bg-sky-500/10 transition-colors" title="Edit">
-                          <FaEdit size={13} />
-                        </button>
-                        <button onClick={() => setDeletingId(trx.id)} className="p-1.5 rounded-lg text-slate-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-500/10 transition-colors" title="Hapus">
-                          <FaTrash size={13} />
-                        </button>
-                      </div>
-                    )}
+                    <div className="flex items-center gap-1">
+                      <button onClick={() => openEdit(trx)} className="p-1.5 rounded-lg text-slate-400 hover:text-sky-600 hover:bg-sky-50 dark:hover:bg-sky-500/10 transition-colors" title="Edit">
+                        <FaEdit size={13} />
+                      </button>
+                      <button onClick={() => setDeletingId(trx.id)} className="p-1.5 rounded-lg text-slate-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-500/10 transition-colors" title="Hapus">
+                        <FaTrash size={13} />
+                      </button>
+                    </div>
                   </td>
                   <td className="px-5 py-3.5 whitespace-nowrap text-sm text-slate-500 dark:text-slate-400">
                     {new Date(trx.transactionDate || trx.createdAt).toLocaleDateString("id-ID", { day: "2-digit", month: "2-digit", year: "numeric", timeZone: "UTC" })}
@@ -310,6 +307,16 @@ export default function DashboardMain() {
             </div>
           </div>
         </div>
+      )}
+
+      {/* Confirm Delete Modal */}
+      {deletingId !== null && (
+        <ConfirmModal
+          message="Transaksi yang dihapus tidak bisa dikembalikan."
+          onConfirm={() => handleDelete(deletingId)}
+          onCancel={() => setDeletingId(null)}
+          loading={deleteLoading}
+        />
       )}
     </div>
   );
