@@ -1,3 +1,4 @@
+import { API_BASE_URL } from "@/config/api";
 ﻿"use client";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
@@ -29,7 +30,7 @@ export default function TransactionForm() {
       return;
     }
     try {
-      const res = await fetch(`http://localhost:3001/transaction/${type}`, {
+      const res = await fetch(`${API_BASE_URL}/transaction/${type}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

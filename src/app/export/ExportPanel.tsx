@@ -1,3 +1,4 @@
+import { API_BASE_URL } from "@/config/api";
 ﻿"use client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
@@ -116,7 +117,7 @@ export default function ExportPanel() {
             </div>
           </div>
           <button
-            onClick={() => downloadFile(`http://localhost:3001/transaction/export/csv${dateQuery()}`, "transactions.csv", "csv")}
+            onClick={() => downloadFile(`${API_BASE_URL}/transaction/export/csv${dateQuery()}`, "transactions.csv", "csv")}
             className="mt-auto w-full bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-600 hover:to-blue-700 text-white py-2.5 rounded-xl font-semibold text-sm transition-all shadow-md shadow-sky-200 dark:shadow-sky-900/20 disabled:opacity-60 disabled:cursor-not-allowed"
             disabled={loading !== null}
           >
@@ -147,7 +148,7 @@ export default function ExportPanel() {
             />
           </div>
           <button
-            onClick={() => downloadFile(`http://localhost:3001/transaction/export/chart-csv?year=${chartYear}`, `chart-data-${chartYear}.csv`, "chart")}
+            onClick={() => downloadFile(`${API_BASE_URL}/transaction/export/chart-csv?year=${chartYear}`, `chart-data-${chartYear}.csv`, "chart")}
             className="mt-auto w-full bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 text-white py-2.5 rounded-xl font-semibold text-sm transition-all shadow-md shadow-emerald-200 dark:shadow-emerald-900/20 disabled:opacity-60 disabled:cursor-not-allowed"
             disabled={loading !== null}
           >
@@ -169,7 +170,7 @@ export default function ExportPanel() {
             </div>
           </div>
           <button
-            onClick={() => downloadFile(`http://localhost:3001/transaction/export/pdf${dateQuery()}`, "laporan-keuangan.pdf", "pdf")}
+            onClick={() => downloadFile(`${API_BASE_URL}/transaction/export/pdf${dateQuery()}`, "laporan-keuangan.pdf", "pdf")}
             className="mt-auto w-full bg-gradient-to-r from-rose-500 to-pink-600 hover:from-rose-600 hover:to-pink-700 text-white py-2.5 rounded-xl font-semibold text-sm transition-all shadow-md shadow-rose-200 dark:shadow-rose-900/20 disabled:opacity-60 disabled:cursor-not-allowed"
             disabled={loading !== null}
           >

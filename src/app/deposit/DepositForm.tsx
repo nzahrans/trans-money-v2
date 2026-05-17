@@ -1,4 +1,5 @@
 "use client";
+import { API_BASE_URL } from "@/config/api";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { FaUser, FaEnvelope } from "react-icons/fa";
@@ -43,7 +44,7 @@ function getUsername(): string {
 		setLoading(true); setError("");
 		const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
 		try {
-			const res = await fetch("http://localhost:3001/transaction/deposit", {
+			const res = await fetch(`${API_BASE_URL}/transaction/deposit`, {
 				method: "POST",
 				headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
 				body: JSON.stringify({ amount: Number(amount), purpose, notes, recorder, transactionDate }),

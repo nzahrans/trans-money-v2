@@ -1,3 +1,4 @@
+import { API_BASE_URL } from "@/config/api";
 ﻿"use client";
 import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
@@ -38,7 +39,7 @@ export default function SummaryGraphic() {
     if (pieEndDate) params.set("endDate", pieEndDate);
 
     setLoading(true);
-    fetch(`http://localhost:3001/dashboard/graphic?${params}`, {
+    fetch(`${API_BASE_URL}/dashboard/graphic?${params}`, {
       headers: { Authorization: `Bearer ${token}` },
     })
       .then(async res => {

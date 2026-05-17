@@ -1,4 +1,5 @@
 "use client";
+import { API_BASE_URL } from "@/config/api";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
@@ -62,7 +63,7 @@ export default function DashboardMain() {
     }
     setUsername(getUsername());
     setLoading(true);
-    fetch("http://localhost:3001/dashboard/summary", {
+    fetch(`${API_BASE_URL}/dashboard/summary`, {
       headers: { Authorization: `Bearer ${token}` },
     })
       .then(async (res) => {
@@ -83,7 +84,7 @@ export default function DashboardMain() {
     setDeleteLoading(true);
     const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
     try {
-      const res = await fetch(`http://localhost:3001/transaction/${id}`, {
+      const res = await fetch(`${API_BASE_URL}/transaction/${id}`, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${token ?? ""}` },
       });
@@ -110,7 +111,7 @@ export default function DashboardMain() {
     setEditLoading(true); setEditError("");
     const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
     try {
-      const res = await fetch(`http://localhost:3001/transaction/${editingTrx.id}`, {
+      const res = await fetch(`${API_BASE_URL}/transaction/${editingTrx.id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${token ?? ""}` },
         body: JSON.stringify({ amount: Number(editForm.amount), purpose: editForm.purpose, notes: editForm.notes, recorder: editForm.recorder, transactionDate: editForm.transactionDate || null }),

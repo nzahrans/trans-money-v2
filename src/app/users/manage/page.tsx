@@ -1,3 +1,4 @@
+import { API_BASE_URL } from "@/config/api";
 ﻿"use client";
 import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
@@ -44,7 +45,7 @@ export default function ManageUsersPage() {
     const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
     if (!token) { router.replace("/auth"); return; }
     setLoading(true);
-    fetch("http://localhost:3001/users/manage", {
+    fetch(`${API_BASE_URL}/users/manage`, {
       headers: { Authorization: `Bearer ${token}` },
     })
       .then(async (res) => {
@@ -67,7 +68,7 @@ export default function ManageUsersPage() {
     const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
     setDeleteLoading(true);
     try {
-      const res = await fetch(`http://localhost:3001/users/${id}`, {
+      const res = await fetch(`${API_BASE_URL}/users/${id}`, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${token ?? ""}` },
       });
@@ -92,7 +93,7 @@ export default function ManageUsersPage() {
     const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
     setFormLoading(true); setFormError("");
     try {
-      const res = await fetch("http://localhost:3001/auth/create-user", {
+      const res = await fetch(`${API_BASE_URL}/auth/create-user`, {
         method: "POST",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${token ?? ""}` },
         body: JSON.stringify({ username: form.username.trim(), password: form.password, role: form.role, name: form.name.trim() || undefined }),
@@ -129,7 +130,7 @@ export default function ManageUsersPage() {
         role: editUserForm.role,
       };
       if (editUserForm.password) body.password = editUserForm.password;
-      const res = await fetch(`http://localhost:3001/users/${editingUser.id}`, {
+      const res = await fetch(`${API_BASE_URL}/users/${editingUser.id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${token ?? ""}` },
         body: JSON.stringify(body),

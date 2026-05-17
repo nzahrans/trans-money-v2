@@ -1,3 +1,4 @@
+import { API_BASE_URL } from "@/config/api";
 ﻿"use client";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
@@ -39,7 +40,7 @@ export default function WithdrawForm() {
 		if (!token) { router.replace("/auth"); return; }
 		setRecorder(getUsername());
 
-		fetch("http://localhost:3001/dashboard/summary", { headers: { Authorization: `Bearer ${token}` } })
+		fetch(`${API_BASE_URL}/dashboard/summary`, { headers: { Authorization: `Bearer ${token}` } })
 			.then(res => res.ok ? res.json() : null)
 			.then(data => { if (data?.saldo != null) setCurrentBalance(data.saldo); })
 			.catch(() => {});
@@ -58,7 +59,7 @@ export default function WithdrawForm() {
 		setLoading(true); setError("");
 		const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
 		try {
-			const res = await fetch("http://localhost:3001/transaction/withdraw", {
+			const res = await fetch(`${API_BASE_URL}/transaction/withdraw`, {
 				method: "POST",
 				headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
 				body: JSON.stringify({ amount: Number(amount), purpose, notes, recorder, transactionDate }),

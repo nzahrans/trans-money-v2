@@ -1,3 +1,4 @@
+import { API_BASE_URL } from "@/config/api";
 ﻿"use client";
 import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
@@ -28,7 +29,7 @@ export default function AuditLogTable() {
     const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
     if (!token) { router.replace("/auth"); return; }
     setLoading(true);
-    fetch(`http://localhost:3001/auditlog?page=${p}&limit=${LIMIT}`, {
+    fetch(`${API_BASE_URL}/auditlog?page=${p}&limit=${LIMIT}`, {
       headers: { Authorization: `Bearer ${token}` },
     })
       .then(async (res) => {

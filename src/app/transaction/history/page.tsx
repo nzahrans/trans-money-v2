@@ -1,4 +1,5 @@
 "use client";
+import { API_BASE_URL } from "@/config/api";
 import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import StatusBadge from "../../../components/StatusBadge";
@@ -53,7 +54,7 @@ export default function TransactionHistoryPage() {
     const params = new URLSearchParams({ page: String(page), limit: String(LIMIT) });
     if (dateFrom) params.set("dateFrom", dateFrom);
     if (dateTo) params.set("dateTo", dateTo);
-    fetch(`http://localhost:3001/transaction/history?${params}`, {
+    fetch(`${API_BASE_URL}/transaction/history?${params}`, {
       headers: { Authorization: `Bearer ${token}` },
     })
       .then(async (res) => {
@@ -77,7 +78,7 @@ export default function TransactionHistoryPage() {
     const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
     setDeleteLoading(true);
     try {
-      const res = await fetch(`http://localhost:3001/transaction/${id}`, {
+      const res = await fetch(`${API_BASE_URL}/transaction/${id}`, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${token ?? ""}` },
       });
@@ -105,7 +106,7 @@ export default function TransactionHistoryPage() {
     setEditLoading(true); setEditError("");
     const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
     try {
-      const res = await fetch(`http://localhost:3001/transaction/${editingTrx.id}`, {
+      const res = await fetch(`${API_BASE_URL}/transaction/${editingTrx.id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${token ?? ""}` },
         body: JSON.stringify({ amount: Number(editForm.amount), purpose: editForm.purpose, notes: editForm.notes, recorder: editForm.recorder, transactionDate: editForm.transactionDate || null }),
