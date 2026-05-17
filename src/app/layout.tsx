@@ -16,12 +16,11 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Trans Kota Kita — Manajemen Keuangan",
-  description: "Aplikasi manajemen keuangan Trans Kota Kita",
-  icons: {
-    icon: "/logo-trans.png",
-    apple: "/logo-trans.png",
+  title: {
+    default: "Trans Kota Kita — Money Management V2",
+    template: "%s — Trans Kota Kita Money Management V2",
   },
+  description: "Aplikasi manajemen keuangan Trans Kota Kita",
 };
 
 export default function RootLayout({
