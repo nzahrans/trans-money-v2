@@ -17,14 +17,16 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
 		<div className="flex min-h-screen">
 			<Sidebar />
 			<div className="flex-1 lg:ml-60 flex flex-col min-h-screen">
-			<header className="h-14 flex items-center justify-between px-4 md:px-6 pl-14 lg:pl-6 border-b-2 border-slate-200 dark:border-white/[0.10] bg-white dark:bg-[#091830] sticky top-0 z-20 shadow-sm gap-2">
-				<span className="text-base font-semibold text-slate-600 dark:text-sky-200/80 truncate hidden sm:block">
-						Trans Kota Kita Money Management V2
-					</span>
-				<span className="text-sm font-semibold text-slate-600 dark:text-sky-200/80 truncate sm:hidden">
-					Trans Money V2
-				</span>
-					<div className="flex items-center gap-1">
+				<header className="h-14 flex items-center justify-between pl-14 pr-4 md:pr-6 lg:px-6 border-b-2 border-slate-200 dark:border-white/[0.10] bg-white dark:bg-[#091830] sticky top-0 z-20 shadow-sm gap-4">
+					<div className="min-w-0 flex-1">
+						<span className="text-base font-semibold text-slate-600 dark:text-sky-200/80 truncate hidden sm:block">
+							Trans Kota Kita Money Management V2
+						</span>
+						<span className="text-sm font-semibold text-slate-600 dark:text-sky-200/80 truncate sm:hidden">
+							Trans Money V2
+						</span>
+					</div>
+					<div className="flex items-center gap-1 flex-shrink-0">
 						<UserBadge />
 						<ThemeToggle />
 					</div>

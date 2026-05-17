@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { FaUser, FaEnvelope } from "react-icons/fa";
@@ -40,7 +40,7 @@ function getUsername(): string {
 
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
-		setLoading(true); setError(""); setSuccess("");
+		setLoading(true); setError("");
 		const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
 		try {
 			const res = await fetch("http://localhost:3001/transaction/deposit", {
