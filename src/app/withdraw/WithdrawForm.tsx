@@ -2,6 +2,8 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { FaUser, FaEnvelope, FaCalculator, FaCopy } from "react-icons/fa";
+import toast from "react-hot-toast";
+import { handleAuthError } from "../../lib/authRedirect";
 
 const WITHDRAW_PURPOSES = [
 	"Reimburse",
@@ -30,14 +32,7 @@ export default function WithdrawForm() {
 	const [transactionDate, setTransactionDate] = useState(() => new Date().toISOString().slice(0, 10));
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState("");
-	const [success, setSuccess] = useState("");
 	const [copied, setCopied] = useState(false);
-
-	useEffect(() => {
-		if (!success) return;
-		const t = setTimeout(() => setSuccess(""), 4000);
-		return () => clearTimeout(t);
-	}, [success]);
 
 	useEffect(() => {
 		const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
@@ -60,7 +55,7 @@ export default function WithdrawForm() {
 
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
-		setLoading(true); setError(""); setSuccess("");
+		setLoading(true); setError("");
 		const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
 		try {
 			const res = await fetch("http://localhost:3001/transaction/withdraw", {
@@ -69,8 +64,11 @@ export default function WithdrawForm() {
 				body: JSON.stringify({ amount: Number(amount), purpose, notes, recorder, transactionDate }),
 			});
 			const data = await res.json();
-			if (!res.ok) throw new Error(data.error || "Withdraw gagal");
-			setSuccess("Withdraw berhasil disimpan!");
+			if (!res.ok) {
+				if (handleAuthError(res.status)) return;
+				throw new Error(data.error || "Withdraw gagal");
+			}
+			toast.success("Withdraw berhasil disimpan!");
 		setAmount(""); setPurpose(""); setNotes(""); setRecorder(getUsername()); setTransactionDate(new Date().toISOString().slice(0, 10));
 		} catch (err: any) {
 			setError(err.message);
@@ -93,16 +91,11 @@ export default function WithdrawForm() {
 									<span className="w-1.5 h-1.5 rounded-full bg-red-500 flex-shrink-0" />{error}
 								</div>
 							)}
-							{success && (
-								<div className="p-3 rounded-lg bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-500/20 text-sm text-emerald-600 dark:text-emerald-400 flex items-center gap-2">
-									<span className="w-1.5 h-1.5 rounded-full bg-emerald-500 flex-shrink-0" />{success}
-								</div>
-							)}
 
-							{/* Nama Pencatat */}
+							{/* Petugas */}
 							<div>
 								<label className="flex items-center gap-1.5 text-sm font-medium text-slate-600 dark:text-slate-400 mb-2">
-									<FaUser size={12} /> Nama Pencatat
+									<FaUser size={12} /> Petugas
 								</label>
 								<input
 									type="text"

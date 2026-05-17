@@ -2,7 +2,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-
+import { Toaster } from "react-hot-toast";
 import AppShell from "../components/layout/AppShell";
 
 const geistSans = Geist({
@@ -18,6 +18,10 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Trans Kota Kita — Manajemen Keuangan",
   description: "Aplikasi manajemen keuangan Trans Kota Kita",
+  icons: {
+    icon: "/logo-trans.png",
+    apple: "/logo-trans.png",
+  },
 };
 
 export default function RootLayout({
@@ -35,6 +39,16 @@ export default function RootLayout({
         <script dangerouslySetInnerHTML={{ __html: `(function(){try{var t=localStorage.getItem('theme');if(t==='dark'){document.documentElement.classList.add('dark')}}catch(e){}})()` }} />
       </head>
       <body className="min-h-full">
+        <Toaster
+          position="top-right"
+          toastOptions={{
+            duration: 3500,
+            style: {
+              borderRadius: "12px",
+              fontSize: "14px",
+            },
+          }}
+        />
         <AppShell>{children}</AppShell>
       </body>
     </html>

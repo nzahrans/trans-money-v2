@@ -2,7 +2,11 @@
 import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import StatusBadge from "../../../components/StatusBadge";
-import { FaEdit, FaTrash, FaTimes } from "react-icons/fa";
+import ConfirmModal from "../../../components/ConfirmModal";
+import TableSkeleton from "../../../components/TableSkeleton";
+import { FaEdit, FaTrash, FaTimes, FaFilter } from "react-icons/fa";
+import toast from "react-hot-toast";
+import { handleAuthError } from "../../../lib/authRedirect";
 
 type Transaction = {
   id: number;
@@ -32,8 +36,11 @@ export default function TransactionHistoryPage() {
   const [error, setError] = useState("");
   const [refreshKey, setRefreshKey] = useState(0);
 
-  const [deletingId, setDeletingId] = useState<number | null>(null);
-  const [deleteError, setDeleteError] = useState("");
+  const [dateFrom, setDateFrom] = useState("");
+  const [dateTo, setDateTo] = useState("");
+
+  const [deleteTarget, setDeleteTarget] = useState<number | null>(null);
+  const [deleteLoading, setDeleteLoading] = useState(false);
   const [editingTrx, setEditingTrx] = useState<Transaction | null>(null);
   const [editForm, setEditForm] = useState<EditForm>({ amount: "", purpose: "", notes: "", recorder: "", transactionDate: "" });
   const [editLoading, setEditLoading] = useState(false);
@@ -43,38 +50,47 @@ export default function TransactionHistoryPage() {
     const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
     if (!token) { router.replace("/auth"); return; }
     setLoading(true);
-    fetch(`http://localhost:3001/transaction/history?page=${page}&limit=${LIMIT}`, {
+    const params = new URLSearchParams({ page: String(page), limit: String(LIMIT) });
+    if (dateFrom) params.set("dateFrom", dateFrom);
+    if (dateTo) params.set("dateTo", dateTo);
+    fetch(`http://localhost:3001/transaction/history?${params}`, {
       headers: { Authorization: `Bearer ${token}` },
     })
       .then(async (res) => {
+        if (handleAuthError(res.status)) return;
         if (!res.ok) { const d = await res.json(); throw new Error(d.error || "Gagal mengambil riwayat"); }
         return res.json();
       })
       .then((data) => {
+        if (!data) return;
         setHistory(Array.isArray(data.transactions) ? data.transactions : []);
         setTotal(data.total ?? 0);
         setTotalPages(data.totalPages ?? 1);
       })
       .catch((err) => setError(err.message))
       .finally(() => setLoading(false));
-  }, [router, page, refreshKey]);
+  }, [router, page, refreshKey, dateFrom, dateTo]);
 
   useEffect(() => { fetchHistory(); }, [fetchHistory]);
 
   const handleDelete = async (id: number) => {
     const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
+    setDeleteLoading(true);
     try {
       const res = await fetch(`http://localhost:3001/transaction/${id}`, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${token ?? ""}` },
       });
+      if (handleAuthError(res.status)) return;
       if (!res.ok) { const d = await res.json(); throw new Error(d.error || "Hapus gagal"); }
-      setDeletingId(null);
-      setDeleteError("");
+      setDeleteTarget(null);
+      toast.success("Transaksi berhasil dihapus");
       setRefreshKey(k => k + 1);
     } catch (err: any) {
-      setDeletingId(null);
-      setDeleteError(err.message);
+      setDeleteTarget(null);
+      toast.error(err.message);
+    } finally {
+      setDeleteLoading(false);
     }
   };
 
@@ -95,8 +111,10 @@ export default function TransactionHistoryPage() {
         body: JSON.stringify({ amount: Number(editForm.amount), purpose: editForm.purpose, notes: editForm.notes, recorder: editForm.recorder, transactionDate: editForm.transactionDate || null }),
       });
       const data = await res.json();
+      if (handleAuthError(res.status)) return;
       if (!res.ok) throw new Error(data.error || "Edit gagal");
       setEditingTrx(null);
+      toast.success("Transaksi berhasil diperbarui");
       setRefreshKey(k => k + 1);
     } catch (err: any) {
       setEditError(err.message);
@@ -125,19 +143,32 @@ export default function TransactionHistoryPage() {
 
   return (
     <div className="w-full flex flex-col gap-6">
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between flex-wrap gap-3">
         <div>
           <h1 className="text-2xl font-bold bg-gradient-to-r from-sky-600 to-blue-600 bg-clip-text text-transparent">Riwayat Transaksi</h1>
           <p className="text-sm text-slate-500 dark:text-slate-400 mt-0.5">Total {total} transaksi</p>
         </div>
-      </div>
-
-      {deleteError && (
-        <div className="flex items-center justify-between gap-2 p-3 rounded-xl bg-red-50 dark:bg-red-500/10 border border-red-200 dark:border-red-500/20 text-sm text-red-600 dark:text-red-400">
-          {deleteError}
-          <button onClick={() => setDeleteError("")} className="p-1 rounded hover:bg-red-100 dark:hover:bg-red-500/20"><FaTimes size={12} /></button>
+        {/* Filter tanggal */}
+        <div className="flex items-center gap-2 flex-wrap">
+          <FaFilter size={12} className="text-slate-400" />
+          <input
+            type="date"
+            value={dateFrom}
+            onChange={e => { setDateFrom(e.target.value); setPage(1); }}
+            className="border border-slate-200 dark:border-sky-700/30 bg-white dark:bg-[#0A1628] px-3 py-1.5 rounded-lg text-xs focus:outline-none focus:ring-2 focus:ring-sky-500 text-slate-700 dark:text-slate-300"
+          />
+          <span className="text-xs text-slate-400">–</span>
+          <input
+            type="date"
+            value={dateTo}
+            onChange={e => { setDateTo(e.target.value); setPage(1); }}
+            className="border border-slate-200 dark:border-sky-700/30 bg-white dark:bg-[#0A1628] px-3 py-1.5 rounded-lg text-xs focus:outline-none focus:ring-2 focus:ring-sky-500 text-slate-700 dark:text-slate-300"
+          />
+          {(dateFrom || dateTo) && (
+            <button onClick={() => { setDateFrom(""); setDateTo(""); setPage(1); }} className="text-xs text-slate-400 hover:text-red-500 transition-colors px-1">× Reset</button>
+          )}
         </div>
-      )}
+      </div>
 
       <div className="bg-white dark:bg-[#0D1F3C] rounded-2xl border border-slate-100 dark:border-sky-900/30 shadow-sm">
         <div className="overflow-x-auto">
@@ -153,41 +184,38 @@ export default function TransactionHistoryPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 dark:divide-sky-900/20">
-              {history.map((trx) => (
-                <tr key={trx.id} className="hover:bg-sky-50/30 dark:hover:bg-sky-900/10 transition-colors">
-                  <td className="px-5 py-3.5 whitespace-nowrap text-sm text-slate-500 dark:text-slate-400">
-                    {new Date(trx.transactionDate || trx.createdAt).toLocaleDateString("id-ID", { day: "2-digit", month: "short", year: "numeric", timeZone: "UTC" })}
-                    {!trx.transactionDate && <span className="ml-1 text-xs text-slate-300 dark:text-slate-600">(input)</span>}
-                  </td>
-                  <td className="px-5 py-3.5 text-slate-800 dark:text-slate-200 font-medium">{trx.purpose}</td>
-                  <td className="px-5 py-3.5 text-slate-500 dark:text-slate-400 text-sm max-w-[160px] truncate hidden md:table-cell">
-                    {trx.notes || <span className="italic text-slate-300 dark:text-slate-600">—</span>}
-                  </td>
-                  <td className="px-5 py-3.5"><StatusBadge type={trx.type} /></td>
-                  <td className={`px-5 py-3.5 text-right font-semibold tabular-nums ${trx.type === "deposit" ? "text-emerald-600 dark:text-emerald-400" : "text-red-600 dark:text-red-400"}`}>
-                    {trx.type === "withdraw" ? "−" : "+"}Rp {trx.amount.toLocaleString("id-ID")}
-                  </td>
-                  <td className="px-5 py-3.5">
-                    <div className="flex items-center justify-center gap-1">
-                      {deletingId === trx.id ? (
-                        <>
-                          <button onClick={() => handleDelete(trx.id)} className="px-2 py-1 text-xs rounded-lg bg-red-500 text-white hover:bg-red-600 transition-colors">Hapus</button>
-                          <button onClick={() => setDeletingId(null)} className="px-2 py-1 text-xs rounded-lg bg-slate-100 dark:bg-white/10 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-white/20 transition-colors">Batal</button>
-                        </>
-                      ) : (
-                        <>
+              {loading ? (
+                <TableSkeleton cols={6} rows={8} />
+              ) : (
+                <>
+                  {history.map((trx) => (
+                    <tr key={trx.id} className="hover:bg-sky-50/30 dark:hover:bg-sky-900/10 transition-colors">
+                      <td className="px-5 py-3.5 whitespace-nowrap text-sm text-slate-500 dark:text-slate-400">
+                        {new Date(trx.transactionDate || trx.createdAt).toLocaleDateString("id-ID", { day: "2-digit", month: "short", year: "numeric", timeZone: "UTC" })}
+                        {!trx.transactionDate && <span className="ml-1 text-xs text-slate-300 dark:text-slate-600">(input)</span>}
+                      </td>
+                      <td className="px-5 py-3.5 text-slate-800 dark:text-slate-200 font-medium">{trx.purpose}</td>
+                      <td className="px-5 py-3.5 text-slate-500 dark:text-slate-400 text-sm max-w-[160px] truncate hidden md:table-cell">
+                        {trx.notes || <span className="italic text-slate-300 dark:text-slate-600">—</span>}
+                      </td>
+                      <td className="px-5 py-3.5"><StatusBadge type={trx.type} /></td>
+                      <td className={`px-5 py-3.5 text-right font-semibold tabular-nums ${trx.type === "deposit" ? "text-emerald-600 dark:text-emerald-400" : "text-red-600 dark:text-red-400"}`}>
+                        {trx.type === "withdraw" ? "−" : "+"}Rp {trx.amount.toLocaleString("id-ID")}
+                      </td>
+                      <td className="px-5 py-3.5">
+                        <div className="flex items-center justify-center gap-1">
                           <button onClick={() => openEdit(trx)} className="p-1.5 rounded-lg text-slate-400 hover:text-sky-600 hover:bg-sky-50 dark:hover:bg-sky-900/30 transition-colors"><FaEdit size={13} /></button>
-                          <button onClick={() => setDeletingId(trx.id)} className="p-1.5 rounded-lg text-slate-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-500/10 transition-colors"><FaTrash size={13} /></button>
-                        </>
-                      )}
-                    </div>
-                  </td>
-                </tr>
-              ))}
-              {history.length === 0 && (
-                <tr>
-                  <td colSpan={6} className="px-5 py-12 text-center text-slate-400 dark:text-slate-500 text-sm">Belum ada riwayat transaksi</td>
-                </tr>
+                          <button onClick={() => setDeleteTarget(trx.id)} className="p-1.5 rounded-lg text-slate-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-500/10 transition-colors"><FaTrash size={13} /></button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                  {history.length === 0 && (
+                    <tr>
+                      <td colSpan={6} className="px-5 py-12 text-center text-slate-400 dark:text-slate-500 text-sm">Belum ada riwayat transaksi</td>
+                    </tr>
+                  )}
+                </>
               )}
             </tbody>
           </table>
@@ -205,7 +233,15 @@ export default function TransactionHistoryPage() {
         )}
       </div>
 
-      {/* Edit Modal */}
+      {/* Confirm Delete Modal */}
+      {deleteTarget !== null && (
+        <ConfirmModal
+          message="Transaksi yang dihapus tidak bisa dikembalikan."
+          onConfirm={() => handleDelete(deleteTarget)}
+          onCancel={() => setDeleteTarget(null)}
+          loading={deleteLoading}
+        />
+      )}
       {editingTrx && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
           <div className="bg-white dark:bg-[#0D1F3C] rounded-2xl border border-slate-100 dark:border-sky-900/30 shadow-2xl w-full max-w-md mx-4 p-6">

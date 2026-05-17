@@ -2,7 +2,11 @@
 import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import StatusBadge from "../../../components/StatusBadge";
+import ConfirmModal from "../../../components/ConfirmModal";
+import TableSkeleton from "../../../components/TableSkeleton";
 import { FaEdit, FaTrash, FaTimes } from "react-icons/fa";
+import toast from "react-hot-toast";
+import { handleAuthError } from "../../../lib/authRedirect";
 
 type Transaction = {
   id: number;
@@ -33,7 +37,7 @@ export default function SummaryTable() {
   const [totalCount, setTotalCount] = useState(0);
   const LIMIT = 20;
   const [deletingId, setDeletingId] = useState<number | null>(null);
-  const [deleteError, setDeleteError] = useState("");
+  const [deleteLoading, setDeleteLoading] = useState(false);
   const [editingTrx, setEditingTrx] = useState<Transaction | null>(null);
   const [editForm, setEditForm] = useState<EditForm>({ amount: "", purpose: "", notes: "", recorder: "", transactionDate: "" });
   const [editLoading, setEditLoading] = useState(false);
@@ -47,10 +51,12 @@ export default function SummaryTable() {
       headers: { Authorization: `Bearer ${token}` },
     })
       .then(async res => {
+        if (handleAuthError(res.status)) return;
         if (!res.ok) throw new Error("Gagal mengambil data transaksi");
         return res.json();
       })
       .then(data => {
+        if (!data) return;
         setTransactions(Array.isArray(data.transactions) ? data.transactions : []);
         setTotalCount(data.total ?? 0);
         setTotalPages(data.totalPages ?? 1);
@@ -61,18 +67,22 @@ export default function SummaryTable() {
 
   const handleDelete = async (id: number) => {
     const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
+    setDeleteLoading(true);
     try {
       const res = await fetch(`http://localhost:3001/transaction/${id}`, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${token ?? ""}` },
       });
+      if (handleAuthError(res.status)) return;
       if (!res.ok) { const d = await res.json(); throw new Error(d.error || "Hapus gagal"); }
       setDeletingId(null);
-      setDeleteError("");
+      toast.success("Transaksi berhasil dihapus");
       setRefreshKey(k => k + 1);
     } catch (err: any) {
       setDeletingId(null);
-      setDeleteError(err.message);
+      toast.error(err.message);
+    } finally {
+      setDeleteLoading(false);
     }
   };
 
@@ -93,8 +103,10 @@ export default function SummaryTable() {
         body: JSON.stringify({ amount: Number(editForm.amount), purpose: editForm.purpose, notes: editForm.notes, recorder: editForm.recorder, transactionDate: editForm.transactionDate || null }),
       });
       const data = await res.json();
+      if (handleAuthError(res.status)) return;
       if (!res.ok) throw new Error(data.error || "Edit gagal");
       setEditingTrx(null);
+      toast.success("Transaksi berhasil diperbarui");
       setRefreshKey(k => k + 1);
     } catch (err: any) {
       setEditError(err.message);
@@ -111,13 +123,25 @@ export default function SummaryTable() {
   });
 
   if (loading) return (
-    <div className="flex items-center justify-center h-64">
-      <div className="flex flex-col items-center gap-3">
-        <svg className="animate-spin h-8 w-8 text-sky-500" fill="none" viewBox="0 0 24 24">
-          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
-        </svg>
-        <span className="text-sm text-slate-500 dark:text-slate-400">Memuat data...</span>
+    <div className="w-full flex flex-col gap-6">
+      <div className="flex items-start justify-between flex-wrap gap-3">
+        <div>
+          <h1 className="text-2xl font-bold bg-gradient-to-r from-sky-600 to-blue-600 bg-clip-text text-transparent">Summary</h1>
+        </div>
+      </div>
+      <div className="bg-white dark:bg-[#0D1F3C] rounded-2xl border border-slate-100 dark:border-sky-900/30 shadow-sm overflow-x-auto">
+        <table className="w-full text-sm">
+          <thead>
+            <tr className="text-xs uppercase tracking-wide text-slate-500 dark:text-slate-400 bg-sky-50/60 dark:bg-sky-900/20">
+              <th className="px-5 py-3 text-left font-medium">Aksi</th>
+              <th className="px-5 py-3 text-left font-medium">Tanggal</th>
+              <th className="px-5 py-3 text-left font-medium">Keperluan</th>
+              <th className="px-5 py-3 text-left font-medium">Tipe</th>
+              <th className="px-5 py-3 text-right font-medium">Jumlah</th>
+            </tr>
+          </thead>
+          <tbody><TableSkeleton cols={5} rows={8} /></tbody>
+        </table>
       </div>
     </div>
   );
@@ -155,12 +179,6 @@ export default function SummaryTable() {
         </div>
       </div>
 
-      {deleteError && (
-        <div className="p-3 rounded-lg bg-red-50 dark:bg-red-500/10 border border-red-200 dark:border-red-500/20 text-sm text-red-600 dark:text-red-400 flex items-center gap-2">
-          <span className="w-1.5 h-1.5 rounded-full bg-red-500 flex-shrink-0" />{deleteError}
-        </div>
-      )}
-
       <div className="bg-white dark:bg-[#0D1F3C] rounded-2xl border border-slate-100 dark:border-sky-900/30 shadow-sm overflow-x-auto">
         <table className="w-full text-sm">
           <thead>
@@ -178,13 +196,7 @@ export default function SummaryTable() {
             {filtered.map(trx => (
               <tr key={trx.id} className="hover:bg-sky-50/40 dark:hover:bg-sky-900/10 transition-colors">
                 <td className="px-5 py-3.5">
-                  {deletingId === trx.id ? (
-                    <div className="flex items-center gap-1">
-                      <span className="text-xs text-slate-500 dark:text-slate-400 mr-0.5">Hapus?</span>
-                      <button onClick={() => handleDelete(trx.id)} className="px-2 py-0.5 rounded text-xs font-medium bg-red-500 hover:bg-red-600 text-white transition-colors">Ya</button>
-                      <button onClick={() => setDeletingId(null)} className="px-2 py-0.5 rounded text-xs font-medium bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-300 dark:hover:bg-slate-600 transition-colors">Batal</button>
-                    </div>
-                  ) : (
+                  {(
                     <div className="flex items-center gap-1">
                       <button onClick={() => openEdit(trx)} className="p-1.5 rounded-lg text-slate-400 hover:text-sky-600 hover:bg-sky-50 dark:hover:bg-sky-500/10 transition-colors" title="Edit"><FaEdit size={13} /></button>
                       <button onClick={() => setDeletingId(trx.id)} className="p-1.5 rounded-lg text-slate-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-500/10 transition-colors" title="Hapus"><FaTrash size={13} /></button>
@@ -281,6 +293,16 @@ export default function SummaryTable() {
             </div>
           </div>
         </div>
+      )}
+
+      {/* Confirm Delete Modal */}
+      {deletingId !== null && (
+        <ConfirmModal
+          message="Transaksi yang dihapus tidak bisa dikembalikan."
+          onConfirm={() => handleDelete(deletingId)}
+          onCancel={() => setDeletingId(null)}
+          loading={deleteLoading}
+        />
       )}
     </div>
   );

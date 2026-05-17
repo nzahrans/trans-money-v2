@@ -2,6 +2,8 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { FaUser, FaEnvelope } from "react-icons/fa";
+import toast from "react-hot-toast";
+import { handleAuthError } from "../../lib/authRedirect";
 
 const DEPOSIT_PURPOSES = [
 	"Deposit Anggota Baru",
@@ -20,7 +22,7 @@ function getUsername(): string {
 	} catch { return ""; }
 }
 
-export default function DepositForm() {
+	export default function DepositForm() {
 	const router = useRouter();
 	const [recorder, setRecorder] = useState("");
 	const [purpose, setPurpose] = useState("");
@@ -29,7 +31,6 @@ export default function DepositForm() {
 	const [transactionDate, setTransactionDate] = useState(() => new Date().toISOString().slice(0, 10));
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState("");
-	const [success, setSuccess] = useState("");
 
 	useEffect(() => {
 		const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
@@ -48,8 +49,11 @@ export default function DepositForm() {
 				body: JSON.stringify({ amount: Number(amount), purpose, notes, recorder, transactionDate }),
 			});
 			const data = await res.json();
-			if (!res.ok) throw new Error(data.error || "Deposit gagal");
-			setSuccess("Deposit berhasil disimpan!");
+			if (!res.ok) {
+				if (handleAuthError(res.status)) return;
+				throw new Error(data.error || "Deposit gagal");
+			}
+			toast.success("Deposit berhasil disimpan!");
 		setAmount(""); setPurpose(""); setNotes(""); setRecorder(getUsername()); setTransactionDate(new Date().toISOString().slice(0, 10));
 		} catch (err: any) {
 			setError(err.message);
@@ -68,11 +72,6 @@ export default function DepositForm() {
 						{error && (
 							<div className="p-3 rounded-lg bg-red-50 dark:bg-red-500/10 border border-red-200 dark:border-red-500/20 text-sm text-red-600 dark:text-red-400 flex items-center gap-2">
 								<span className="w-1.5 h-1.5 rounded-full bg-red-500 flex-shrink-0" />{error}
-							</div>
-						)}
-						{success && (
-							<div className="p-3 rounded-lg bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-500/20 text-sm text-emerald-600 dark:text-emerald-400 flex items-center gap-2">
-								<span className="w-1.5 h-1.5 rounded-full bg-emerald-500 flex-shrink-0" />{success}
 							</div>
 						)}
 

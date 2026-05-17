@@ -3,6 +3,7 @@ import { usePathname } from "next/navigation";
 import Sidebar from "../Sidebar";
 import ThemeToggle from "../ThemeToggle";
 import UserBadge from "../UserBadge";
+import PageTransition from "../PageTransition";
 
 export default function AppShell({ children }: { children: React.ReactNode }) {
 	const pathname = usePathname();
@@ -29,7 +30,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
 					</div>
 				</header>
 				<main className="flex-1 p-4 md:p-6 bg-gradient-to-br from-slate-50 via-white to-sky-50/30 dark:from-[#071426] dark:via-[#071426] dark:to-[#0D2D4E]">
-					{children}
+					<PageTransition>{children}</PageTransition>
 				</main>
 			</div>
 		</div>

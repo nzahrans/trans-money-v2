@@ -3,6 +3,9 @@ import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { useUserRole } from "../../../lib/useUserRole";
 import { FaTrash, FaTimes, FaUserPlus, FaUser, FaShieldAlt, FaEdit } from "react-icons/fa";
+import ConfirmModal from "../../../components/ConfirmModal";
+import toast from "react-hot-toast";
+import { handleAuthError } from "../../../lib/authRedirect";
 
 type User = {
   id: number;
@@ -25,13 +28,12 @@ export default function ManageUsersPage() {
   const [refreshKey, setRefreshKey] = useState(0);
 
   const [deletingId, setDeletingId] = useState<number | null>(null);
-  const [deleteError, setDeleteError] = useState("");
+  const [deleteLoading, setDeleteLoading] = useState(false);
 
   const [showForm, setShowForm] = useState(false);
   const [form, setForm] = useState<CreateForm>({ username: "", password: "", role: "pengurus", name: "" });
   const [formLoading, setFormLoading] = useState(false);
   const [formError, setFormError] = useState("");
-  const [formSuccess, setFormSuccess] = useState("");
 
   const [editingUser, setEditingUser] = useState<User | null>(null);
   const [editUserForm, setEditUserForm] = useState<EditUserForm>({ name: "", username: "", password: "", role: "pengurus" });
@@ -46,10 +48,11 @@ export default function ManageUsersPage() {
       headers: { Authorization: `Bearer ${token}` },
     })
       .then(async (res) => {
+        if (handleAuthError(res.status)) return;
         if (!res.ok) { const d = await res.json(); throw new Error(d.error || "Akses ditolak"); }
         return res.json();
       })
-      .then((data) => setUsers(Array.isArray(data) ? data : []))
+      .then((data) => { if (data) setUsers(Array.isArray(data) ? data : []); })
       .catch((err) => setError(err.message))
       .finally(() => setLoading(false));
   }, [router, refreshKey]);
@@ -62,18 +65,22 @@ export default function ManageUsersPage() {
 
   const handleDelete = async (id: number) => {
     const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
-    setDeleteError("");
+    setDeleteLoading(true);
     try {
       const res = await fetch(`http://localhost:3001/users/${id}`, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${token ?? ""}` },
       });
+      if (handleAuthError(res.status)) return;
       if (!res.ok) { const d = await res.json(); throw new Error(d.error || "Hapus gagal"); }
       setDeletingId(null);
+      toast.success("Pengguna berhasil dihapus");
       setRefreshKey(k => k + 1);
     } catch (err: any) {
       setDeletingId(null);
-      setDeleteError(err.message);
+      toast.error(err.message);
+    } finally {
+      setDeleteLoading(false);
     }
   };
 
@@ -83,7 +90,7 @@ export default function ManageUsersPage() {
       setFormError("Username dan password wajib diisi"); return;
     }
     const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
-    setFormLoading(true); setFormError(""); setFormSuccess("");
+    setFormLoading(true); setFormError("");
     try {
       const res = await fetch("http://localhost:3001/auth/create-user", {
         method: "POST",
@@ -92,7 +99,7 @@ export default function ManageUsersPage() {
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Gagal membuat user");
-      setFormSuccess(`User "${form.username}" berhasil dibuat`);
+      toast.success(`User "${form.username}" berhasil dibuat`);
       setForm({ username: "", password: "", role: "pengurus", name: "" });
       setShowForm(false);
       setRefreshKey(k => k + 1);
@@ -128,8 +135,10 @@ export default function ManageUsersPage() {
         body: JSON.stringify(body),
       });
       const data = await res.json();
+      if (handleAuthError(res.status)) return;
       if (!res.ok) throw new Error(data.error || "Gagal update user");
       setEditingUser(null);
+      toast.success("Pengguna berhasil diperbarui");
       setRefreshKey(k => k + 1);
     } catch (err: any) {
       setEditUserError(err.message);
@@ -224,7 +233,7 @@ export default function ManageUsersPage() {
           <p className="text-sm text-slate-500 dark:text-slate-400 mt-0.5">{users.length} pengguna terdaftar</p>
         </div>
         <button
-          onClick={() => { setShowForm(v => !v); setFormError(""); setFormSuccess(""); }}
+          onClick={() => { setShowForm(v => !v); setFormError(""); }}
           className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold text-white bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-600 hover:to-blue-700 transition-all shadow-sm"
         >
           <FaUserPlus size={14} /> Tambah Pengguna
@@ -287,22 +296,6 @@ export default function ManageUsersPage() {
         </div>
       )}
 
-      {/* Success toast */}
-      {formSuccess && (
-        <div className="flex items-center justify-between gap-2 p-3 rounded-xl bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-500/20 text-sm text-emerald-700 dark:text-emerald-400">
-          {formSuccess}
-          <button onClick={() => setFormSuccess("")} className="p-1 rounded hover:bg-emerald-100 dark:hover:bg-emerald-500/20"><FaTimes size={12} /></button>
-        </div>
-      )}
-
-      {/* Delete error */}
-      {deleteError && (
-        <div className="flex items-center justify-between gap-2 p-3 rounded-xl bg-red-50 dark:bg-red-500/10 border border-red-200 dark:border-red-500/20 text-sm text-red-600 dark:text-red-400">
-          {deleteError}
-          <button onClick={() => setDeleteError("")} className="p-1 rounded hover:bg-red-100 dark:hover:bg-red-500/20"><FaTimes size={12} /></button>
-        </div>
-      )}
-
       {/* Users Table */}
       <div className="bg-white dark:bg-[#0D1F3C] rounded-2xl border border-slate-100 dark:border-sky-900/30 shadow-sm">
         <div className="overflow-x-auto">
@@ -351,20 +344,13 @@ export default function ManageUsersPage() {
                       >
                         <FaEdit size={13} />
                       </button>
-                      {deletingId === user.id ? (
-                        <div className="flex items-center gap-1">
-                          <button onClick={() => handleDelete(user.id)} className="px-2.5 py-1 text-xs rounded-lg bg-red-500 text-white hover:bg-red-600 transition-colors font-medium">Hapus</button>
-                          <button onClick={() => setDeletingId(null)} className="px-2.5 py-1 text-xs rounded-lg bg-slate-100 dark:bg-white/10 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-white/20 transition-colors">Batal</button>
-                        </div>
-                      ) : (
-                        <button
-                          onClick={() => setDeletingId(user.id)}
-                          className="p-1.5 rounded-lg text-slate-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-500/10 transition-colors"
-                          title="Hapus pengguna"
-                        >
-                          <FaTrash size={13} />
-                        </button>
-                      )}
+                      <button
+                        onClick={() => setDeletingId(user.id)}
+                        className="p-1.5 rounded-lg text-slate-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-500/10 transition-colors"
+                        title="Hapus pengguna"
+                      >
+                        <FaTrash size={13} />
+                      </button>
                     </div>
                   </td>
                 </tr>
@@ -378,6 +364,16 @@ export default function ManageUsersPage() {
           </table>
         </div>
       </div>
+
+      {/* Confirm Delete Modal */}
+      {deletingId !== null && (
+        <ConfirmModal
+          message="Pengguna yang dihapus tidak bisa dikembalikan."
+          onConfirm={() => handleDelete(deletingId)}
+          onCancel={() => setDeletingId(null)}
+          loading={deleteLoading}
+        />
+      )}
     </div>
   );
 }
