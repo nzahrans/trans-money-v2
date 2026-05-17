@@ -38,6 +38,7 @@ export default function PurposeChart({ labels, values, canvasId = "purpose-chart
       },
       options: {
         responsive: true,
+        maintainAspectRatio: false,
         plugins: {
           legend: {
             position: "right",
@@ -57,5 +58,9 @@ export default function PurposeChart({ labels, values, canvasId = "purpose-chart
     return () => chart.destroy();
   }, [labels, values]);
 
-  return <canvas ref={canvasRef} id={canvasId} />;
+  return (
+    <div style={{ position: "relative", height: 260 }}>
+      <canvas ref={canvasRef} id={canvasId} />
+    </div>
+  );
 }

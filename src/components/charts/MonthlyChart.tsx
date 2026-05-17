@@ -38,6 +38,7 @@ export default function MonthlyChart({ deposit, withdraw, canvasId = "monthly-ch
       },
       options: {
         responsive: true,
+        maintainAspectRatio: false,
         plugins: {
           legend: { position: "bottom" },
           tooltip: {
@@ -63,5 +64,9 @@ export default function MonthlyChart({ deposit, withdraw, canvasId = "monthly-ch
     return () => chart.destroy();
   }, [deposit, withdraw]);
 
-  return <canvas ref={canvasRef} id={canvasId} />;
+  return (
+    <div style={{ position: "relative", height: 240 }}>
+      <canvas ref={canvasRef} id={canvasId} />
+    </div>
+  );
 }

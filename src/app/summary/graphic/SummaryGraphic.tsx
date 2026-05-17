@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import MonthlyChart from "../../../components/charts/MonthlyChart";
@@ -17,7 +17,7 @@ const CURRENT_YEAR = new Date().getFullYear();
 const YEAR_OPTIONS = Array.from({ length: CURRENT_YEAR - 2022 }, (_, i) => 2023 + i).concat(CURRENT_YEAR + 1);
 
 const inputClass =
-  "text-xs px-2.5 py-1.5 rounded-lg border border-slate-200 dark:border-violet-900/40 bg-white dark:bg-[#211c45] text-slate-700 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-violet-400/50";
+  "text-xs px-2.5 py-1.5 rounded-lg border border-slate-200 dark:border-sky-900/40 bg-white dark:bg-[#0A1628] text-slate-700 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-sky-400/50";
 
 export default function SummaryGraphic() {
   const router = useRouter();
@@ -55,7 +55,7 @@ export default function SummaryGraphic() {
   if (loading) return (
     <div className="flex items-center justify-center h-64">
       <div className="flex flex-col items-center gap-3">
-        <svg className="animate-spin h-8 w-8 text-violet-500" fill="none" viewBox="0 0 24 24">
+        <svg className="animate-spin h-8 w-8 text-sky-500" fill="none" viewBox="0 0 24 24">
           <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
           <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
         </svg>
@@ -71,12 +71,12 @@ export default function SummaryGraphic() {
   );
 
   return (
-    <div className="max-w-6xl mx-auto flex flex-col gap-6">
-      <h1 className="text-2xl font-bold bg-gradient-to-r from-violet-600 to-indigo-600 bg-clip-text text-transparent">Grafik Ringkasan</h1>
+    <div className="w-full flex flex-col gap-6">
+      <h1 className="text-2xl font-bold bg-gradient-to-r from-sky-600 to-blue-600 bg-clip-text text-transparent">Grafik Ringkasan</h1>
 
       <div className="flex flex-col gap-6">
         {/* Bar chart full width + filter tahun */}
-        <div className="bg-white dark:bg-[#1a1635] rounded-2xl border border-slate-100 dark:border-violet-900/30 shadow-sm p-5">
+        <div className="bg-white dark:bg-[#0D1F3C] rounded-2xl border border-slate-100 dark:border-sky-900/30 shadow-sm p-5">
           <div className="flex items-center justify-between mb-4">
             <h2 className="font-semibold text-slate-700 dark:text-slate-200 text-sm">Transaksi Bulanan</h2>
             <select
@@ -98,12 +98,12 @@ export default function SummaryGraphic() {
         </div>
 
         {/* Filter range + dua pie chart dalam satu card */}
-        <div className="bg-white dark:bg-[#1a1635] rounded-2xl border border-slate-100 dark:border-violet-900/30 shadow-sm overflow-hidden">
+        <div className="bg-white dark:bg-[#0D1F3C] rounded-2xl border border-slate-100 dark:border-sky-900/30 shadow-sm overflow-hidden">
           {/* Header card */}
-          <div className="flex flex-wrap items-center justify-between gap-3 px-5 py-4 border-b border-slate-100 dark:border-violet-900/20">
+          <div className="flex flex-wrap items-center justify-between gap-3 px-5 py-4 border-b border-slate-100 dark:border-sky-900/20">
             <div>
               <h2 className="font-semibold text-slate-700 dark:text-slate-200 text-sm">Distribusi Keperluan</h2>
-              <p className="text-xs text-slate-400 dark:text-indigo-300/40 mt-0.5">
+              <p className="text-xs text-slate-400 dark:text-sky-300/40 mt-0.5">
                 {(pieStartDate || pieEndDate)
                   ? `${pieStartDate || "∞"} – ${pieEndDate || "∞"}`
                   : `Seluruh tahun ${selectedYear}`}
@@ -126,7 +126,7 @@ export default function SummaryGraphic() {
               {(pieStartDate || pieEndDate) && (
                 <button
                   onClick={() => { setPieStartDate(""); setPieEndDate(""); }}
-                  className="text-xs px-2.5 py-1.5 rounded-lg bg-violet-50 dark:bg-violet-900/30 text-violet-600 dark:text-violet-300 hover:bg-violet-100 dark:hover:bg-violet-900/50 transition-colors font-medium"
+                  className="text-xs px-2.5 py-1.5 rounded-lg bg-sky-50 dark:bg-sky-900/30 text-sky-600 dark:text-sky-300 hover:bg-sky-100 dark:hover:bg-sky-900/50 transition-colors font-medium"
                 >
                   Reset
                 </button>
@@ -135,7 +135,7 @@ export default function SummaryGraphic() {
           </div>
 
           {/* Dua pie chart */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 divide-y lg:divide-y-0 lg:divide-x divide-slate-100 dark:divide-violet-900/20">
+          <div className="grid grid-cols-1 lg:grid-cols-2 divide-y lg:divide-y-0 lg:divide-x divide-slate-100 dark:divide-sky-900/20">
             <div className="p-5">
               <div className="flex items-center gap-2 mb-4">
                 <span className="w-2 h-2 rounded-full bg-emerald-500 flex-shrink-0" />
@@ -149,8 +149,8 @@ export default function SummaryGraphic() {
                 />
               ) : (
                 <div className="flex flex-col items-center justify-center py-10 gap-2">
-                  <div className="w-10 h-10 rounded-full bg-slate-100 dark:bg-violet-900/20 flex items-center justify-center">
-                    <span className="text-slate-300 dark:text-violet-700 text-lg">—</span>
+                  <div className="w-10 h-10 rounded-full bg-slate-100 dark:bg-sky-900/20 flex items-center justify-center">
+                    <span className="text-slate-300 dark:text-sky-700 text-lg">—</span>
                   </div>
                   <p className="text-xs text-slate-400 dark:text-slate-500">Belum ada data deposit</p>
                 </div>
@@ -169,8 +169,8 @@ export default function SummaryGraphic() {
                 />
               ) : (
                 <div className="flex flex-col items-center justify-center py-10 gap-2">
-                  <div className="w-10 h-10 rounded-full bg-slate-100 dark:bg-violet-900/20 flex items-center justify-center">
-                    <span className="text-slate-300 dark:text-violet-700 text-lg">—</span>
+                  <div className="w-10 h-10 rounded-full bg-slate-100 dark:bg-sky-900/20 flex items-center justify-center">
+                    <span className="text-slate-300 dark:text-sky-700 text-lg">—</span>
                   </div>
                   <p className="text-xs text-slate-400 dark:text-slate-500">Belum ada data withdraw</p>
                 </div>
