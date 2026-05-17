@@ -1,6 +1,6 @@
+"use client";
 import { API_BASE_URL } from "@/config/api";
-﻿"use client";
-import { useEffect, useState } from "react";
+﻿import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { FaUser, FaEnvelope, FaCalculator, FaCopy } from "react-icons/fa";
 import toast from "react-hot-toast";

@@ -1,6 +1,6 @@
+"use client";
 import { API_BASE_URL } from "@/config/api";
-﻿"use client";
-import { useEffect, useState, useCallback } from "react";
+﻿import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { useUserRole } from "../../../lib/useUserRole";
 import { FaTrash, FaTimes, FaUserPlus, FaUser, FaShieldAlt, FaEdit } from "react-icons/fa";

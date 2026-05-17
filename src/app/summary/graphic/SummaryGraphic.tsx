@@ -1,6 +1,6 @@
+"use client";
 import { API_BASE_URL } from "@/config/api";
-﻿"use client";
-import { useEffect, useState, useCallback } from "react";
+﻿import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import MonthlyChart from "../../../components/charts/MonthlyChart";
 import PurposeChart from "../../../components/charts/PurposeChart";

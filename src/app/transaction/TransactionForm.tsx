@@ -1,6 +1,6 @@
+"use client";
 import { API_BASE_URL } from "@/config/api";
-﻿"use client";
-import { useState, useEffect } from "react";
+﻿import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 
 export default function TransactionForm() {
