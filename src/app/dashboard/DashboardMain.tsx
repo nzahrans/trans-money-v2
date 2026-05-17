@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
@@ -203,7 +203,7 @@ export default function DashboardMain() {
             View All →
           </Link>
         </div>
-        <div className="overflow-x-auto">
+        <div className="hidden md:block overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
               <tr className="text-xs uppercase tracking-wide text-slate-500 dark:text-slate-400 bg-sky-50/60 dark:bg-sky-900/20">
@@ -255,6 +255,49 @@ export default function DashboardMain() {
               )}
             </tbody>
           </table>
+        </div>
+
+        {/* Mobile View: Cards */}
+        <div className="md:hidden p-4 flex flex-col gap-3">
+          {summary?.lastTransactions.map((trx) => (
+            <div key={trx.id} className="bg-slate-50/50 dark:bg-[#091830]/50 rounded-xl border border-slate-100/50 dark:border-sky-950/20 p-3.5 flex flex-col gap-3">
+              <div className="flex items-center justify-between">
+                <span className="text-xs text-slate-500 dark:text-slate-400 font-medium">
+                  {new Date(trx.transactionDate || trx.createdAt).toLocaleDateString("id-ID", { day: "2-digit", month: "2-digit", year: "numeric", timeZone: "UTC" })}
+                  {!trx.transactionDate && <span className="ml-1 text-[10px] text-slate-300 dark:text-slate-600">(input)</span>}
+                </span>
+                <StatusBadge type={trx.type} />
+              </div>
+              
+              <div>
+                <h4 className="font-semibold text-slate-800 dark:text-slate-100 text-sm">{trx.purpose}</h4>
+                {trx.recorder && (
+                  <p className="text-[11px] text-slate-400 dark:text-slate-500 mt-0.5">
+                    Pencatat: <span className="font-medium text-slate-600 dark:text-slate-400">{trx.recorder}</span>
+                  </p>
+                )}
+              </div>
+
+              <div className="flex items-center justify-between pt-2 border-t border-slate-100/80 dark:border-sky-950/40">
+                <span className={`text-base font-semibold tabular-nums ${trx.type === "deposit" ? "text-emerald-600 dark:text-emerald-400" : "text-red-600 dark:text-red-400"}`}>
+                  Rp {trx.amount.toLocaleString("id-ID")}
+                </span>
+                <div className="flex items-center gap-2">
+                  <button onClick={() => openEdit(trx)} className="p-2 rounded-lg text-slate-400 hover:text-sky-600 hover:bg-sky-50 dark:hover:bg-white/5 transition-colors border border-slate-100 dark:border-sky-900/30 flex items-center gap-1.5 text-xs font-medium px-3 py-1">
+                    <FaEdit size={12} /> Edit
+                  </button>
+                  <button onClick={() => setDeletingId(trx.id)} className="p-2 rounded-lg text-slate-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-500/10 transition-colors border border-slate-100 dark:border-sky-900/30 flex items-center gap-1.5 text-xs font-medium px-3 py-1">
+                    <FaTrash size={12} /> Hapus
+                  </button>
+                </div>
+              </div>
+            </div>
+          ))}
+          {(!summary?.lastTransactions || summary.lastTransactions.length === 0) && (
+            <div className="text-center text-slate-400 dark:text-slate-500 text-sm py-8">
+              Belum ada transaksi
+            </div>
+          )}
         </div>
       </div>
 

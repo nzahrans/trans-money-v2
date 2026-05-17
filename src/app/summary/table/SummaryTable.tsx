@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import StatusBadge from "../../../components/StatusBadge";
@@ -179,7 +179,8 @@ export default function SummaryTable() {
         </div>
       </div>
 
-      <div className="bg-white dark:bg-[#0D1F3C] rounded-2xl border border-slate-100 dark:border-sky-900/30 shadow-sm overflow-x-auto">
+      {/* Desktop Table View */}
+      <div className="hidden md:block bg-white dark:bg-[#0D1F3C] rounded-2xl border border-slate-100 dark:border-sky-900/30 shadow-sm overflow-hidden">
         <table className="w-full text-sm">
           <thead>
             <tr className="text-xs uppercase tracking-wide text-slate-500 dark:text-slate-400 bg-sky-50/60 dark:bg-sky-900/20">
@@ -231,17 +232,65 @@ export default function SummaryTable() {
         </table>
       </div>
 
-      {/* Pagination */}
+      {/* Mobile Card View */}
+      <div className="grid grid-cols-1 gap-3 md:hidden">
+        {filtered.map(trx => (
+          <div key={trx.id} className="bg-white dark:bg-[#0D1F3C] rounded-2xl border border-slate-100 dark:border-sky-900/30 p-4 shadow-sm flex flex-col gap-3">
+            <div className="flex items-center justify-between">
+              <span className="text-xs text-slate-500 dark:text-slate-400 font-medium">
+                {new Date(trx.transactionDate || trx.createdAt).toLocaleDateString("id-ID", { day: "2-digit", month: "short", year: "numeric", timeZone: "UTC" })}
+                {!trx.transactionDate && <span className="ml-1 text-[10px] text-slate-300 dark:text-slate-600">(input)</span>}
+              </span>
+              <StatusBadge type={trx.type} />
+            </div>
+
+            <div>
+              <h4 className="font-semibold text-slate-800 dark:text-slate-100 text-sm">{trx.purpose}</h4>
+              {trx.recorder && (
+                <p className="text-[11px] text-slate-400 dark:text-slate-500 mt-0.5">
+                  Pencatat: <span className="font-medium text-slate-600 dark:text-slate-400">{trx.recorder}</span>
+                </p>
+              )}
+              {trx.notes && (
+                <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 italic">
+                  "{trx.notes}"
+                </p>
+              )}
+            </div>
+
+            <div className="flex items-center justify-between pt-2 border-t border-slate-100 dark:border-sky-900/20">
+              <span className={`text-base font-semibold tabular-nums ${trx.type === "deposit" ? "text-emerald-600 dark:text-emerald-400" : "text-rose-600 dark:text-rose-400"}`}>
+                {trx.type === "withdraw" ? "−" : "+"}Rp {trx.amount.toLocaleString("id-ID")}
+              </span>
+              <div className="flex items-center gap-2">
+                <button onClick={() => openEdit(trx)} className="p-2 rounded-lg text-slate-400 hover:text-sky-600 hover:bg-sky-50 dark:hover:bg-[#0D1F3C] transition-colors border border-slate-100 dark:border-sky-900/30 flex items-center gap-1.5 text-xs font-medium px-3 py-1">
+                  <FaEdit size={12} /> Edit
+                </button>
+                <button onClick={() => setDeletingId(trx.id)} className="p-2 rounded-lg text-slate-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-500/10 transition-colors border border-slate-100 dark:border-sky-900/30 flex items-center gap-1.5 text-xs font-medium px-3 py-1">
+                  <FaTrash size={12} /> Hapus
+                </button>
+              </div>
+            </div>
+          </div>
+        ))}
+        {filtered.length === 0 && (
+          <div className="bg-white dark:bg-[#0D1F3C] rounded-2xl border border-slate-100 dark:border-sky-900/30 p-8 text-center text-slate-400 dark:text-slate-500 text-sm">
+            Belum ada transaksi
+          </div>
+        )}
+      </div>
+
+      {/* Pagination Container */}
       {totalPages > 1 && (
-        <div className="flex items-center justify-between px-5 py-3.5 border-t border-slate-100 dark:border-sky-900/20">
+        <div className="flex items-center justify-between px-5 py-3.5 bg-white dark:bg-[#0D1F3C] rounded-2xl border border-slate-100 dark:border-sky-900/30 shadow-sm">
           <span className="text-xs text-slate-500 dark:text-slate-400">Halaman {page} dari {totalPages}</span>
-          <div className="flex gap-1">
+          <div className="flex gap-1.5">
             <button onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page === 1}
-              className="px-3 py-1.5 text-xs rounded-lg border border-slate-200 dark:border-sky-900/30 disabled:opacity-40 hover:bg-sky-50 dark:hover:bg-sky-900/20 transition-colors text-slate-600 dark:text-slate-300">
+              className="px-3.5 py-2 text-xs rounded-lg border border-slate-200 dark:border-sky-900/30 disabled:opacity-40 hover:bg-sky-50 dark:hover:bg-sky-900/20 transition-colors text-slate-600 dark:text-slate-300 font-medium">
               ← Prev
             </button>
             <button onClick={() => setPage(p => Math.min(totalPages, p + 1))} disabled={page === totalPages}
-              className="px-3 py-1.5 text-xs rounded-lg border border-slate-200 dark:border-sky-900/30 disabled:opacity-40 hover:bg-sky-50 dark:hover:bg-sky-900/20 transition-colors text-slate-600 dark:text-slate-300">
+              className="px-3.5 py-2 text-xs rounded-lg border border-slate-200 dark:border-sky-900/30 disabled:opacity-40 hover:bg-sky-50 dark:hover:bg-sky-900/20 transition-colors text-slate-600 dark:text-slate-300 font-medium">
               Next →
             </button>
           </div>

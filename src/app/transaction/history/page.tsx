@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import StatusBadge from "../../../components/StatusBadge";
@@ -170,7 +170,8 @@ export default function TransactionHistoryPage() {
         </div>
       </div>
 
-      <div className="bg-white dark:bg-[#0D1F3C] rounded-2xl border border-slate-100 dark:border-sky-900/30 shadow-sm">
+      {/* Desktop Table View */}
+      <div className="hidden md:block bg-white dark:bg-[#0D1F3C] rounded-2xl border border-slate-100 dark:border-sky-900/30 shadow-sm overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
@@ -184,54 +185,93 @@ export default function TransactionHistoryPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 dark:divide-sky-900/20">
-              {loading ? (
-                <TableSkeleton cols={6} rows={8} />
-              ) : (
-                <>
-                  {history.map((trx) => (
-                    <tr key={trx.id} className="hover:bg-sky-50/30 dark:hover:bg-sky-900/10 transition-colors">
-                      <td className="px-5 py-3.5 whitespace-nowrap text-sm text-slate-500 dark:text-slate-400">
-                        {new Date(trx.transactionDate || trx.createdAt).toLocaleDateString("id-ID", { day: "2-digit", month: "short", year: "numeric", timeZone: "UTC" })}
-                        {!trx.transactionDate && <span className="ml-1 text-xs text-slate-300 dark:text-slate-600">(input)</span>}
-                      </td>
-                      <td className="px-5 py-3.5 text-slate-800 dark:text-slate-200 font-medium">{trx.purpose}</td>
-                      <td className="px-5 py-3.5 text-slate-500 dark:text-slate-400 text-sm max-w-[160px] truncate hidden md:table-cell">
-                        {trx.notes || <span className="italic text-slate-300 dark:text-slate-600">—</span>}
-                      </td>
-                      <td className="px-5 py-3.5"><StatusBadge type={trx.type} /></td>
-                      <td className={`px-5 py-3.5 text-right font-semibold tabular-nums ${trx.type === "deposit" ? "text-emerald-600 dark:text-emerald-400" : "text-red-600 dark:text-red-400"}`}>
-                        {trx.type === "withdraw" ? "−" : "+"}Rp {trx.amount.toLocaleString("id-ID")}
-                      </td>
-                      <td className="px-5 py-3.5">
-                        <div className="flex items-center justify-center gap-1">
-                          <button onClick={() => openEdit(trx)} className="p-1.5 rounded-lg text-slate-400 hover:text-sky-600 hover:bg-sky-50 dark:hover:bg-sky-900/30 transition-colors"><FaEdit size={13} /></button>
-                          <button onClick={() => setDeleteTarget(trx.id)} className="p-1.5 rounded-lg text-slate-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-500/10 transition-colors"><FaTrash size={13} /></button>
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-                  {history.length === 0 && (
-                    <tr>
-                      <td colSpan={6} className="px-5 py-12 text-center text-slate-400 dark:text-slate-500 text-sm">Belum ada riwayat transaksi</td>
-                    </tr>
-                  )}
-                </>
+              {history.map((trx) => (
+                <tr key={trx.id} className="hover:bg-sky-50/30 dark:hover:bg-sky-900/10 transition-colors">
+                  <td className="px-5 py-3.5 whitespace-nowrap text-sm text-slate-500 dark:text-slate-400">
+                    {new Date(trx.transactionDate || trx.createdAt).toLocaleDateString("id-ID", { day: "2-digit", month: "short", year: "numeric", timeZone: "UTC" })}
+                    {!trx.transactionDate && <span className="ml-1 text-xs text-slate-300 dark:text-slate-600">(input)</span>}
+                  </td>
+                  <td className="px-5 py-3.5 text-slate-800 dark:text-slate-200 font-medium">{trx.purpose}</td>
+                  <td className="px-5 py-3.5 text-slate-500 dark:text-slate-400 text-sm max-w-[160px] truncate hidden md:table-cell">
+                    {trx.notes || <span className="italic text-slate-300 dark:text-slate-600">—</span>}
+                  </td>
+                  <td className="px-5 py-3.5"><StatusBadge type={trx.type} /></td>
+                  <td className={`px-5 py-3.5 text-right font-semibold tabular-nums ${trx.type === "deposit" ? "text-emerald-600 dark:text-emerald-400" : "text-red-600 dark:text-red-400"}`}>
+                    {trx.type === "withdraw" ? "−" : "+"}Rp {trx.amount.toLocaleString("id-ID")}
+                  </td>
+                  <td className="px-5 py-3.5">
+                    <div className="flex items-center justify-center gap-1">
+                      <button onClick={() => openEdit(trx)} className="p-1.5 rounded-lg text-slate-400 hover:text-sky-600 hover:bg-sky-50 dark:hover:bg-sky-900/30 transition-colors"><FaEdit size={13} /></button>
+                      <button onClick={() => setDeleteTarget(trx.id)} className="p-1.5 rounded-lg text-slate-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-500/10 transition-colors"><FaTrash size={13} /></button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+              {history.length === 0 && (
+                <tr>
+                  <td colSpan={6} className="px-5 py-12 text-center text-slate-400 dark:text-slate-500 text-sm">Belum ada riwayat transaksi</td>
+                </tr>
               )}
             </tbody>
           </table>
         </div>
-        {totalPages > 1 && (
-          <div className="flex items-center justify-between px-5 py-3.5 border-t border-slate-100 dark:border-sky-900/20">
-            <span className="text-xs text-slate-500 dark:text-slate-400">Halaman {page} dari {totalPages}</span>
-            <div className="flex gap-1">
-              <button onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page === 1}
-                className="px-3 py-1.5 text-xs rounded-lg border border-slate-200 dark:border-sky-900/30 disabled:opacity-40 hover:bg-sky-50 dark:hover:bg-sky-900/20 transition-colors text-slate-600 dark:text-slate-300">← Prev</button>
-              <button onClick={() => setPage(p => Math.min(totalPages, p + 1))} disabled={page === totalPages}
-                className="px-3 py-1.5 text-xs rounded-lg border border-slate-200 dark:border-sky-900/30 disabled:opacity-40 hover:bg-sky-50 dark:hover:bg-sky-900/20 transition-colors text-slate-600 dark:text-slate-300">Next →</button>
+      </div>
+
+      {/* Mobile Card View */}
+      <div className="grid grid-cols-1 gap-3 md:hidden">
+        {history.map((trx) => (
+          <div key={trx.id} className="bg-white dark:bg-[#0D1F3C] rounded-2xl border border-slate-100 dark:border-sky-900/30 p-4 shadow-sm flex flex-col gap-3">
+            <div className="flex items-center justify-between">
+              <span className="text-xs text-slate-500 dark:text-slate-400 font-medium">
+                {new Date(trx.transactionDate || trx.createdAt).toLocaleDateString("id-ID", { day: "2-digit", month: "short", year: "numeric", timeZone: "UTC" })}
+                {!trx.transactionDate && <span className="ml-1 text-[10px] text-slate-300 dark:text-slate-600">(input)</span>}
+              </span>
+              <StatusBadge type={trx.type} />
             </div>
+
+            <div>
+              <h4 className="font-semibold text-slate-800 dark:text-slate-200 text-sm">{trx.purpose}</h4>
+              {trx.notes && (
+                <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 italic">
+                  "{trx.notes}"
+                </p>
+              )}
+            </div>
+
+            <div className="flex items-center justify-between pt-2 border-t border-slate-100 dark:border-sky-900/20">
+              <span className={`text-base font-semibold tabular-nums ${trx.type === "deposit" ? "text-emerald-600 dark:text-emerald-400" : "text-red-600 dark:text-red-400"}`}>
+                {trx.type === "withdraw" ? "−" : "+"}Rp {trx.amount.toLocaleString("id-ID")}
+              </span>
+              <div className="flex items-center gap-2">
+                <button onClick={() => openEdit(trx)} className="p-2 rounded-lg text-slate-400 hover:text-sky-600 hover:bg-sky-50 dark:hover:bg-sky-900/30 transition-colors border border-slate-100 dark:border-sky-900/30 flex items-center gap-1.5 text-xs font-medium px-3 py-1">
+                  <FaEdit size={12} /> Edit
+                </button>
+                <button onClick={() => setDeleteTarget(trx.id)} className="p-2 rounded-lg text-slate-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-500/10 transition-colors border border-slate-100 dark:border-sky-900/30 flex items-center gap-1.5 text-xs font-medium px-3 py-1">
+                  <FaTrash size={12} /> Hapus
+                </button>
+              </div>
+            </div>
+          </div>
+        ))}
+        {history.length === 0 && (
+          <div className="bg-white dark:bg-[#0D1F3C] rounded-2xl border border-slate-100 dark:border-sky-900/30 p-8 text-center text-slate-400 dark:text-slate-500 text-sm">
+            Belum ada riwayat transaksi
           </div>
         )}
       </div>
+
+      {/* Pagination Container */}
+      {totalPages > 1 && (
+        <div className="flex items-center justify-between px-5 py-3.5 bg-white dark:bg-[#0D1F3C] rounded-2xl border border-slate-100 dark:border-sky-900/30 shadow-sm">
+          <span className="text-xs text-slate-500 dark:text-slate-400">Halaman {page} dari {totalPages}</span>
+          <div className="flex gap-1.5">
+            <button onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page === 1}
+              className="px-3.5 py-2 text-xs rounded-lg border border-slate-200 dark:border-sky-900/30 disabled:opacity-40 hover:bg-sky-50 dark:hover:bg-sky-900/20 transition-colors text-slate-600 dark:text-slate-300 font-medium">← Prev</button>
+            <button onClick={() => setPage(p => Math.min(totalPages, p + 1))} disabled={page === totalPages}
+              className="px-3.5 py-2 text-xs rounded-lg border border-slate-200 dark:border-sky-900/30 disabled:opacity-40 hover:bg-sky-50 dark:hover:bg-sky-900/20 transition-colors text-slate-600 dark:text-slate-300 font-medium">Next →</button>
+          </div>
+        </div>
+      )}
 
       {/* Confirm Delete Modal */}
       {deleteTarget !== null && (
