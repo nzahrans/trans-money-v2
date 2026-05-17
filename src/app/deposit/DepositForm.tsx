@@ -75,10 +75,10 @@ function getUsername(): string {
 							</div>
 						)}
 
-						{/* Nama Pencatat */}
+						{/* Petugas */}
 						<div>
 							<label className="flex items-center gap-1.5 text-sm font-medium text-slate-600 dark:text-slate-400 mb-2">
-								<FaUser size={12} /> Nama Pencatat
+								<FaUser size={12} /> Petugas
 							</label>
 							<input
 								type="text"

@@ -162,7 +162,7 @@ export default function SummaryTable() {
         <div className="flex items-center gap-2 flex-wrap w-full sm:w-auto">
           <input
             type="text"
-            placeholder="Cari keperluan / recorder..."
+            placeholder="Cari keperluan / petugas..."
             className="border border-slate-200 dark:border-sky-700/30 bg-white dark:bg-[#0A1628] px-3 py-2 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-sky-500 text-slate-900 dark:text-slate-100 placeholder:text-slate-400 w-full sm:w-52 shadow-sm"
             value={search}
             onChange={e => setSearch(e.target.value)}
@@ -187,7 +187,7 @@ export default function SummaryTable() {
               <th className="px-5 py-3 text-left font-medium">Aksi</th>
               <th className="px-5 py-3 text-left font-medium">Tanggal</th>
               <th className="px-5 py-3 text-left font-medium">Keperluan</th>
-              <th className="px-5 py-3 text-left font-medium hidden lg:table-cell">Recorder</th>
+              <th className="px-5 py-3 text-left font-medium hidden lg:table-cell">Petugas</th>
               <th className="px-5 py-3 text-left font-medium">Tipe</th>
               <th className="px-5 py-3 text-right font-medium">Jumlah</th>
               <th className="px-5 py-3 text-left font-medium hidden md:table-cell">Notes</th>
@@ -248,7 +248,7 @@ export default function SummaryTable() {
               <h4 className="font-semibold text-slate-800 dark:text-slate-100 text-sm">{trx.purpose}</h4>
               {trx.recorder && (
                 <p className="text-[11px] text-slate-400 dark:text-slate-500 mt-0.5">
-                  Pencatat: <span className="font-medium text-slate-600 dark:text-slate-400">{trx.recorder}</span>
+                  Petugas: <span className="font-medium text-slate-600 dark:text-slate-400">{trx.recorder}</span>
                 </p>
               )}
               {trx.notes && (
@@ -324,7 +324,7 @@ export default function SummaryTable() {
                 </select>
               </div>
               <div>
-                <label className="block text-sm font-medium text-slate-600 dark:text-slate-400 mb-1.5">Pencatat</label>
+                <label className="block text-sm font-medium text-slate-600 dark:text-slate-400 mb-1.5">Petugas</label>
                 <div className="w-full border border-slate-200 dark:border-sky-700/30 bg-slate-100 dark:bg-[#071426] px-3 py-2.5 rounded-lg text-sm text-slate-500 dark:text-slate-400">
                   {editForm.recorder || <span className="italic">—</span>}
                 </div>
