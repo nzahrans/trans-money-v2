@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import StatusBadge from "../../../components/StatusBadge";
@@ -11,10 +11,14 @@ type Transaction = {
   purpose: string;
   notes?: string;
   recorder?: string;
+  transactionDate?: string;
   createdAt: string;
 };
 
-type EditForm = { amount: string; purpose: string; notes: string; recorder: string };
+type EditForm = { amount: string; purpose: string; notes: string; recorder: string; transactionDate: string };
+
+const DEPOSIT_PURPOSES = ["Deposit Anggota Baru", "Denda Resign", "Setoran", "KTA Trans", "Other"];
+const WITHDRAW_PURPOSES = ["Reimburse", "Sponsorship", "Gaji Pegawai", "Pajak", "Other"];
 
 const LIMIT = 20;
 
@@ -76,7 +80,7 @@ export default function TransactionHistoryPage() {
 
   const openEdit = (trx: Transaction) => {
     setEditingTrx(trx);
-    setEditForm({ amount: String(trx.amount), purpose: trx.purpose, notes: trx.notes ?? "", recorder: trx.recorder ?? "" });
+    setEditForm({ amount: String(trx.amount), purpose: trx.purpose, notes: trx.notes ?? "", recorder: trx.recorder ?? "", transactionDate: (trx.transactionDate || trx.createdAt).slice(0, 10) });
     setEditError("");
   };
 
@@ -88,7 +92,7 @@ export default function TransactionHistoryPage() {
       const res = await fetch(`http://localhost:3001/transaction/${editingTrx.id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${token ?? ""}` },
-        body: JSON.stringify({ amount: Number(editForm.amount), purpose: editForm.purpose, notes: editForm.notes, recorder: editForm.recorder }),
+        body: JSON.stringify({ amount: Number(editForm.amount), purpose: editForm.purpose, notes: editForm.notes, recorder: editForm.recorder, transactionDate: editForm.transactionDate || null }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Edit gagal");
@@ -104,7 +108,7 @@ export default function TransactionHistoryPage() {
   if (loading) return (
     <div className="flex items-center justify-center h-64">
       <div className="flex flex-col items-center gap-3">
-        <svg className="animate-spin h-8 w-8 text-violet-500" fill="none" viewBox="0 0 24 24">
+        <svg className="animate-spin h-8 w-8 text-sky-500" fill="none" viewBox="0 0 24 24">
           <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
           <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
         </svg>
@@ -120,10 +124,10 @@ export default function TransactionHistoryPage() {
   );
 
   return (
-    <div className="max-w-6xl mx-auto flex flex-col gap-6">
+    <div className="w-full flex flex-col gap-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold bg-gradient-to-r from-violet-600 to-indigo-600 bg-clip-text text-transparent">Riwayat Transaksi</h1>
+          <h1 className="text-2xl font-bold bg-gradient-to-r from-sky-600 to-blue-600 bg-clip-text text-transparent">Riwayat Transaksi</h1>
           <p className="text-sm text-slate-500 dark:text-slate-400 mt-0.5">Total {total} transaksi</p>
         </div>
       </div>
@@ -135,11 +139,11 @@ export default function TransactionHistoryPage() {
         </div>
       )}
 
-      <div className="bg-white dark:bg-[#1a1635] rounded-2xl border border-slate-100 dark:border-violet-900/30 shadow-sm">
+      <div className="bg-white dark:bg-[#0D1F3C] rounded-2xl border border-slate-100 dark:border-sky-900/30 shadow-sm">
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="text-xs uppercase tracking-wide text-slate-500 dark:text-slate-400 bg-violet-50/60 dark:bg-violet-900/20">
+              <tr className="text-xs uppercase tracking-wide text-slate-500 dark:text-slate-400 bg-sky-50/60 dark:bg-sky-900/20">
                 <th className="px-5 py-3 text-left font-medium">Tanggal</th>
                 <th className="px-5 py-3 text-left font-medium">Keperluan</th>
                 <th className="px-5 py-3 text-left font-medium">Catatan</th>
@@ -148,14 +152,15 @@ export default function TransactionHistoryPage() {
                 <th className="px-5 py-3 text-center font-medium">Aksi</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100 dark:divide-violet-900/20">
+            <tbody className="divide-y divide-slate-100 dark:divide-sky-900/20">
               {history.map((trx) => (
-                <tr key={trx.id} className="hover:bg-violet-50/30 dark:hover:bg-violet-900/10 transition-colors">
-                  <td className="px-5 py-3.5 whitespace-nowrap text-xs text-slate-500 dark:text-slate-400">
-                    {new Date(trx.createdAt).toLocaleDateString("id-ID", { day: "2-digit", month: "short", year: "numeric", timeZone: "UTC" })}
+                <tr key={trx.id} className="hover:bg-sky-50/30 dark:hover:bg-sky-900/10 transition-colors">
+                  <td className="px-5 py-3.5 whitespace-nowrap text-sm text-slate-500 dark:text-slate-400">
+                    {new Date(trx.transactionDate || trx.createdAt).toLocaleDateString("id-ID", { day: "2-digit", month: "short", year: "numeric", timeZone: "UTC" })}
+                    {!trx.transactionDate && <span className="ml-1 text-xs text-slate-300 dark:text-slate-600">(input)</span>}
                   </td>
                   <td className="px-5 py-3.5 text-slate-800 dark:text-slate-200 font-medium">{trx.purpose}</td>
-                  <td className="px-5 py-3.5 text-slate-500 dark:text-slate-400 text-xs max-w-[160px] truncate">
+                  <td className="px-5 py-3.5 text-slate-500 dark:text-slate-400 text-sm max-w-[160px] truncate">
                     {trx.notes || <span className="italic text-slate-300 dark:text-slate-600">—</span>}
                   </td>
                   <td className="px-5 py-3.5"><StatusBadge type={trx.type} /></td>
@@ -171,7 +176,7 @@ export default function TransactionHistoryPage() {
                         </>
                       ) : (
                         <>
-                          <button onClick={() => openEdit(trx)} className="p-1.5 rounded-lg text-slate-400 hover:text-violet-600 hover:bg-violet-50 dark:hover:bg-violet-900/30 transition-colors"><FaEdit size={13} /></button>
+                          <button onClick={() => openEdit(trx)} className="p-1.5 rounded-lg text-slate-400 hover:text-sky-600 hover:bg-sky-50 dark:hover:bg-sky-900/30 transition-colors"><FaEdit size={13} /></button>
                           <button onClick={() => setDeletingId(trx.id)} className="p-1.5 rounded-lg text-slate-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-500/10 transition-colors"><FaTrash size={13} /></button>
                         </>
                       )}
@@ -188,13 +193,13 @@ export default function TransactionHistoryPage() {
           </table>
         </div>
         {totalPages > 1 && (
-          <div className="flex items-center justify-between px-5 py-3.5 border-t border-slate-100 dark:border-violet-900/20">
+          <div className="flex items-center justify-between px-5 py-3.5 border-t border-slate-100 dark:border-sky-900/20">
             <span className="text-xs text-slate-500 dark:text-slate-400">Halaman {page} dari {totalPages}</span>
             <div className="flex gap-1">
               <button onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page === 1}
-                className="px-3 py-1.5 text-xs rounded-lg border border-slate-200 dark:border-violet-900/30 disabled:opacity-40 hover:bg-violet-50 dark:hover:bg-violet-900/20 transition-colors text-slate-600 dark:text-slate-300">← Prev</button>
+                className="px-3 py-1.5 text-xs rounded-lg border border-slate-200 dark:border-sky-900/30 disabled:opacity-40 hover:bg-sky-50 dark:hover:bg-sky-900/20 transition-colors text-slate-600 dark:text-slate-300">← Prev</button>
               <button onClick={() => setPage(p => Math.min(totalPages, p + 1))} disabled={page === totalPages}
-                className="px-3 py-1.5 text-xs rounded-lg border border-slate-200 dark:border-violet-900/30 disabled:opacity-40 hover:bg-violet-50 dark:hover:bg-violet-900/20 transition-colors text-slate-600 dark:text-slate-300">Next →</button>
+                className="px-3 py-1.5 text-xs rounded-lg border border-slate-200 dark:border-sky-900/30 disabled:opacity-40 hover:bg-sky-50 dark:hover:bg-sky-900/20 transition-colors text-slate-600 dark:text-slate-300">Next →</button>
             </div>
           </div>
         )}
@@ -203,7 +208,7 @@ export default function TransactionHistoryPage() {
       {/* Edit Modal */}
       {editingTrx && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
-          <div className="bg-white dark:bg-[#1a1635] rounded-2xl border border-slate-100 dark:border-violet-900/30 shadow-2xl w-full max-w-md mx-4 p-6">
+          <div className="bg-white dark:bg-[#0D1F3C] rounded-2xl border border-slate-100 dark:border-sky-900/30 shadow-2xl w-full max-w-md mx-4 p-6">
             <div className="flex items-center justify-between mb-5">
               <h3 className="font-semibold text-slate-800 dark:text-slate-100">Edit Transaksi</h3>
               <button onClick={() => setEditingTrx(null)} className="p-1 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-white/10 transition-colors"><FaTimes size={14} /></button>
@@ -211,21 +216,29 @@ export default function TransactionHistoryPage() {
             {editError && <div className="mb-4 p-3 rounded-lg bg-red-50 dark:bg-red-500/10 border border-red-200 dark:border-red-500/20 text-sm text-red-600 dark:text-red-400">{editError}</div>}
             <div className="flex flex-col gap-4">
               <div>
+                <label className="block text-sm font-medium text-slate-600 dark:text-slate-400 mb-1.5">Tanggal Transaksi</label>
+                <input type="date" className="w-full border border-slate-200 dark:border-sky-700/30 bg-slate-50 dark:bg-[#0A1628] px-3 py-2.5 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-sky-500 text-slate-900 dark:text-slate-100" value={editForm.transactionDate} onChange={e => setEditForm(f => ({ ...f, transactionDate: e.target.value }))} />
+              </div>
+              <div>
                 <label className="block text-sm font-medium text-slate-600 dark:text-slate-400 mb-1.5">Jumlah (Rp)</label>
-                <input type="number" min={1} className="w-full border border-slate-200 dark:border-violet-700/30 bg-slate-50 dark:bg-[#211c45] px-3 py-2.5 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-violet-500 text-slate-900 dark:text-slate-100" value={editForm.amount} onChange={e => setEditForm(f => ({ ...f, amount: e.target.value }))} />
+                <input type="number" min={1} className="w-full border border-slate-200 dark:border-sky-700/30 bg-slate-50 dark:bg-[#0A1628] px-3 py-2.5 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-sky-500 text-slate-900 dark:text-slate-100" value={editForm.amount} onChange={e => setEditForm(f => ({ ...f, amount: e.target.value }))} />
               </div>
               <div>
                 <label className="block text-sm font-medium text-slate-600 dark:text-slate-400 mb-1.5">Keperluan</label>
-                <input type="text" className="w-full border border-slate-200 dark:border-violet-700/30 bg-slate-50 dark:bg-[#211c45] px-3 py-2.5 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-violet-500 text-slate-900 dark:text-slate-100" value={editForm.purpose} onChange={e => setEditForm(f => ({ ...f, purpose: e.target.value }))} />
+                <select className="w-full border border-slate-200 dark:border-sky-700/30 bg-slate-50 dark:bg-[#0A1628] px-3 py-2.5 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-sky-500 text-slate-900 dark:text-slate-100" value={editForm.purpose} onChange={e => setEditForm(f => ({ ...f, purpose: e.target.value }))}>
+                  {(editingTrx.type === "deposit" ? DEPOSIT_PURPOSES : WITHDRAW_PURPOSES).map(p => (
+                    <option key={p} value={p}>{p}</option>
+                  ))}
+                </select>
               </div>
               <div>
                 <label className="block text-sm font-medium text-slate-600 dark:text-slate-400 mb-1.5">Catatan</label>
-                <input type="text" className="w-full border border-slate-200 dark:border-violet-700/30 bg-slate-50 dark:bg-[#211c45] px-3 py-2.5 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-violet-500 text-slate-900 dark:text-slate-100" value={editForm.notes} onChange={e => setEditForm(f => ({ ...f, notes: e.target.value }))} />
+                <input type="text" className="w-full border border-slate-200 dark:border-sky-700/30 bg-slate-50 dark:bg-[#0A1628] px-3 py-2.5 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-sky-500 text-slate-900 dark:text-slate-100" value={editForm.notes} onChange={e => setEditForm(f => ({ ...f, notes: e.target.value }))} />
               </div>
             </div>
             <div className="flex gap-3 mt-6">
-              <button onClick={() => setEditingTrx(null)} className="flex-1 py-2.5 rounded-lg text-sm font-medium border border-slate-200 dark:border-violet-900/30 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-white/5 transition-colors">Batal</button>
-              <button onClick={handleEditSave} disabled={editLoading} className="flex-1 py-2.5 rounded-lg text-sm font-semibold text-white bg-gradient-to-r from-indigo-500 to-violet-600 hover:from-indigo-600 hover:to-violet-700 transition-all disabled:opacity-60">
+              <button onClick={() => setEditingTrx(null)} className="flex-1 py-2.5 rounded-lg text-sm font-medium border border-slate-200 dark:border-sky-900/30 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-white/5 transition-colors">Batal</button>
+              <button onClick={handleEditSave} disabled={editLoading} className="flex-1 py-2.5 rounded-lg text-sm font-semibold text-white bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-600 hover:to-blue-700 transition-all disabled:opacity-60">
                 {editLoading ? "Menyimpan..." : "Simpan"}
               </button>
             </div>
