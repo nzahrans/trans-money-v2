@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 
@@ -55,7 +55,7 @@ export default function AuditLogTable() {
   if (loading) return (
     <div className="flex items-center justify-center h-64">
       <div className="flex flex-col items-center gap-3">
-        <svg className="animate-spin h-8 w-8 text-violet-500" fill="none" viewBox="0 0 24 24">
+        <svg className="animate-spin h-8 w-8 text-sky-500" fill="none" viewBox="0 0 24 24">
           <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
           <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
         </svg>
@@ -71,34 +71,34 @@ export default function AuditLogTable() {
   );
 
   return (
-    <div className="max-w-6xl mx-auto flex flex-col gap-6">
+    <div className="w-full flex flex-col gap-6">
       <div className="flex items-center justify-between flex-wrap gap-3">
         <div>
-          <h1 className="text-2xl font-bold bg-gradient-to-r from-violet-600 to-indigo-600 bg-clip-text text-transparent">Audit Log</h1>
+          <h1 className="text-2xl font-bold bg-gradient-to-r from-sky-600 to-blue-600 bg-clip-text text-transparent">Audit Log</h1>
           <p className="text-sm text-slate-500 dark:text-slate-400 mt-0.5">Total {total} aktivitas tercatat</p>
         </div>
         <input
           type="text"
           placeholder="Cari aksi / user..."
-          className="border border-slate-200 dark:border-violet-700/30 bg-white dark:bg-[#211c45] px-3 py-2 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-violet-500 text-slate-900 dark:text-slate-100 placeholder:text-slate-400 w-52 shadow-sm"
+          className="border border-slate-200 dark:border-sky-700/30 bg-white dark:bg-[#0A1628] px-3 py-2 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-sky-500 text-slate-900 dark:text-slate-100 placeholder:text-slate-400 w-52 shadow-sm"
           value={search}
           onChange={e => setSearch(e.target.value)}
         />
       </div>
-      <div className="bg-white dark:bg-[#1a1635] rounded-2xl border border-slate-100 dark:border-violet-900/30 shadow-sm">
+      <div className="bg-white dark:bg-[#0D1F3C] rounded-2xl border border-slate-100 dark:border-sky-900/30 shadow-sm">
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="text-xs uppercase tracking-wide text-slate-500 dark:text-slate-400 bg-violet-50/60 dark:bg-violet-900/20">
+              <tr className="text-xs uppercase tracking-wide text-slate-500 dark:text-slate-400 bg-sky-50/60 dark:bg-sky-900/20">
                 <th className="px-5 py-3 text-left font-medium w-16">ID</th>
                 <th className="px-5 py-3 text-left font-medium">Waktu</th>
                 <th className="px-5 py-3 text-left font-medium">User</th>
                 <th className="px-5 py-3 text-left font-medium">Aksi</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100 dark:divide-violet-900/20">
+            <tbody className="divide-y divide-slate-100 dark:divide-sky-900/20">
               {filtered.map((log) => (
-                <tr key={log.id} className="hover:bg-violet-50/40 dark:hover:bg-violet-900/10 transition-colors">
+                <tr key={log.id} className="hover:bg-sky-50/40 dark:hover:bg-sky-900/10 transition-colors">
                   <td className="px-5 py-3.5 text-slate-400 dark:text-slate-500 tabular-nums">{log.id}</td>
                   <td className="px-5 py-3.5 text-xs text-slate-500 dark:text-slate-400 whitespace-nowrap">
                     {log.createdAt
@@ -123,7 +123,7 @@ export default function AuditLogTable() {
         </div>
         {/* Pagination */}
         {totalPages > 1 && (
-          <div className="flex items-center justify-between px-5 py-3.5 border-t border-slate-100 dark:border-violet-900/20">
+          <div className="flex items-center justify-between px-5 py-3.5 border-t border-slate-100 dark:border-sky-900/20">
             <span className="text-xs text-slate-500 dark:text-slate-400">
               Halaman {page} dari {totalPages}
             </span>
@@ -131,12 +131,12 @@ export default function AuditLogTable() {
               <button
                 onClick={() => setPage(p => Math.max(1, p - 1))}
                 disabled={page === 1}
-                className="px-3 py-1.5 text-xs rounded-lg border border-slate-200 dark:border-violet-900/30 disabled:opacity-40 hover:bg-violet-50 dark:hover:bg-violet-900/20 transition-colors text-slate-600 dark:text-slate-300"
+                className="px-3 py-1.5 text-xs rounded-lg border border-slate-200 dark:border-sky-900/30 disabled:opacity-40 hover:bg-sky-50 dark:hover:bg-sky-900/20 transition-colors text-slate-600 dark:text-slate-300"
               >← Prev</button>
               <button
                 onClick={() => setPage(p => Math.min(totalPages, p + 1))}
                 disabled={page === totalPages}
-                className="px-3 py-1.5 text-xs rounded-lg border border-slate-200 dark:border-violet-900/30 disabled:opacity-40 hover:bg-violet-50 dark:hover:bg-violet-900/20 transition-colors text-slate-600 dark:text-slate-300"
+                className="px-3 py-1.5 text-xs rounded-lg border border-slate-200 dark:border-sky-900/30 disabled:opacity-40 hover:bg-sky-50 dark:hover:bg-sky-900/20 transition-colors text-slate-600 dark:text-slate-300"
               >Next →</button>
             </div>
           </div>

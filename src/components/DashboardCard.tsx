@@ -2,12 +2,12 @@ import { ReactNode } from "react";
 
 const colorConfig = {
   blue: {
-    gradient: "bg-gradient-to-br from-indigo-500 to-violet-600",
-    shadow: "shadow-lg shadow-indigo-300/40 dark:shadow-indigo-900/30",
+    gradient: "bg-gradient-to-br from-sky-500 to-blue-600",
+    shadow: "shadow-lg shadow-sky-300/40 dark:shadow-sky-900/30",
     iconBg: "bg-white/20",
   },
   green: {
-    gradient: "bg-gradient-to-br from-emerald-500 to-teal-600",
+    gradient: "bg-gradient-to-br from-emerald-400 to-green-500",
     shadow: "shadow-lg shadow-emerald-300/40 dark:shadow-emerald-900/30",
     iconBg: "bg-white/20",
   },

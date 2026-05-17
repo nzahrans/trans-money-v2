@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 
@@ -51,18 +51,18 @@ export default function TransactionForm() {
   };
 
   return (
-    <div className="max-w-6xl mx-auto flex flex-col gap-6">
-      <h1 className="text-2xl font-bold bg-gradient-to-r from-violet-600 to-indigo-600 bg-clip-text text-transparent">Transaksi Baru</h1>
+    <div className="w-full flex flex-col gap-6">
+      <h1 className="text-2xl font-bold bg-gradient-to-r from-sky-600 to-blue-600 bg-clip-text text-transparent">Transaksi Baru</h1>
       <div className="max-w-lg">
-        <div className="bg-white dark:bg-[#1a1635] rounded-2xl border border-slate-100 dark:border-violet-900/30 shadow-sm overflow-hidden">
+        <div className="bg-white dark:bg-[#0D1F3C] rounded-2xl border border-slate-100 dark:border-sky-900/30 shadow-sm overflow-hidden">
           {/* Type Tab */}
-          <div className="flex border-b border-slate-100 dark:border-violet-900/30">
+          <div className="flex border-b border-slate-100 dark:border-sky-900/30">
             <button
               type="button"
               onClick={() => setType('deposit')}
               className={`flex-1 py-3.5 text-sm font-semibold transition-colors ${
                 type === 'deposit'
-                  ? 'bg-gradient-to-r from-indigo-500 to-violet-600 text-white'
+                  ? 'bg-gradient-to-r from-sky-500 to-blue-600 text-white'
                   : 'text-slate-500 hover:bg-slate-50 dark:hover:bg-white/5 dark:text-slate-400'
               }`}
             >
@@ -73,7 +73,7 @@ export default function TransactionForm() {
               onClick={() => setType('withdraw')}
               className={`flex-1 py-3.5 text-sm font-semibold transition-colors ${
                 type === 'withdraw'
-                  ? 'bg-gradient-to-r from-indigo-500 to-violet-600 text-white'
+                  ? 'bg-gradient-to-r from-sky-500 to-blue-600 text-white'
                   : 'text-slate-500 hover:bg-slate-50 dark:hover:bg-white/5 dark:text-slate-400'
               }`}
             >
@@ -100,7 +100,7 @@ export default function TransactionForm() {
               </label>
               <input
                 type="number"
-                className="w-full border border-slate-200 dark:border-violet-700/30 bg-slate-50 dark:bg-[#211c45] px-4 py-2.5 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-violet-500 text-slate-900 dark:text-slate-100 placeholder:text-slate-400"
+                className="w-full border border-slate-200 dark:border-sky-700/30 bg-slate-50 dark:bg-[#0A1628] px-4 py-2.5 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-sky-500 text-slate-900 dark:text-slate-100 placeholder:text-slate-400"
                 value={amount}
                 onChange={e => setAmount(e.target.value)}
                 required
@@ -112,7 +112,7 @@ export default function TransactionForm() {
               <label className="block text-sm font-medium text-slate-600 dark:text-slate-400 mb-1.5">Keperluan</label>
               <input
                 type="text"
-                className="w-full border border-slate-200 dark:border-violet-700/30 bg-slate-50 dark:bg-[#211c45] px-4 py-2.5 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-violet-500 text-slate-900 dark:text-slate-100 placeholder:text-slate-400"
+                className="w-full border border-slate-200 dark:border-sky-700/30 bg-slate-50 dark:bg-[#0A1628] px-4 py-2.5 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-sky-500 text-slate-900 dark:text-slate-100 placeholder:text-slate-400"
                 value={purpose}
                 onChange={e => setPurpose(e.target.value)}
                 required
@@ -125,7 +125,7 @@ export default function TransactionForm() {
               </label>
               <input
                 type="text"
-                className="w-full border border-slate-200 dark:border-violet-700/30 bg-slate-50 dark:bg-[#211c45] px-4 py-2.5 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-violet-500 text-slate-900 dark:text-slate-100 placeholder:text-slate-400"
+                className="w-full border border-slate-200 dark:border-sky-700/30 bg-slate-50 dark:bg-[#0A1628] px-4 py-2.5 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-sky-500 text-slate-900 dark:text-slate-100 placeholder:text-slate-400"
                 value={notes}
                 onChange={e => setNotes(e.target.value)}
                 placeholder="Catatan tambahan"
@@ -134,7 +134,7 @@ export default function TransactionForm() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-2.5 rounded-lg font-semibold text-sm text-white bg-gradient-to-r from-indigo-500 to-violet-600 hover:from-indigo-600 hover:to-violet-700 transition-all shadow-md shadow-violet-200 dark:shadow-violet-900/20 disabled:opacity-60 disabled:cursor-not-allowed"
+              className="w-full py-2.5 rounded-lg font-semibold text-sm text-white bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-600 hover:to-blue-700 transition-all shadow-md shadow-sky-200 dark:shadow-sky-900/20 disabled:opacity-60 disabled:cursor-not-allowed"
             >
               {loading ? (
                 <span className="flex items-center justify-center gap-2">

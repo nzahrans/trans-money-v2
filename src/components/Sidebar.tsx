@@ -42,11 +42,11 @@ export default function Sidebar() {
         href={href}
         className={`flex items-center gap-3 px-3 py-2.5 rounded-xl font-medium text-sm transition-all border-l-2 ${
           active
-            ? "bg-violet-100 text-violet-900 border-violet-500 pl-[10px] shadow-sm dark:bg-white/[0.12] dark:text-white dark:border-violet-400"
-            : "text-slate-500 hover:bg-slate-100 hover:text-slate-700 border-transparent dark:text-indigo-200/60 dark:hover:bg-white/[0.06] dark:hover:text-indigo-100"
+            ? "bg-sky-100 text-sky-900 border-sky-500 pl-[10px] shadow-sm dark:bg-white/[0.12] dark:text-white dark:border-sky-400"
+            : "text-slate-500 hover:bg-slate-100 hover:text-slate-700 border-transparent dark:text-sky-200/60 dark:hover:bg-white/[0.06] dark:hover:text-sky-100"
         }`}
       >
-        <span className={active ? "text-violet-600 dark:text-violet-300" : "text-slate-400 dark:text-indigo-300/50"}>{icon}</span>
+        <span className={active ? "text-sky-600 dark:text-sky-300" : "text-slate-400 dark:text-sky-300/50"}>{icon}</span>
         {label}
       </Link>
     );
@@ -57,19 +57,18 @@ export default function Sidebar() {
   const sidebarContent = (
     <>
       {/* Brand */}
-      <div className="flex items-center gap-3 px-5 py-4 border-b border-slate-200/80 dark:border-white/[0.08]">
-        <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-violet-500 to-indigo-600 flex items-center justify-center flex-shrink-0 shadow-lg shadow-violet-500/40">
-          <FaWallet size={15} className="text-white" />
+      <div className="flex items-center gap-0.5 px-5 py-4 border-b border-slate-200/80 dark:border-white/[0.08]">
+        <div className="w-9 h-9 flex items-center justify-center flex-shrink-0">
+          <img src="/logo-trans.png" alt="Trans Logo" className="w-9 h-9 object-contain" />
         </div>
         <div className="min-w-0">
-          <p className="font-bold text-sm text-slate-900 dark:text-white leading-tight truncate">Trans Kota Kita</p>
-          <p className="text-[10px] text-slate-400 dark:text-indigo-300/50 leading-tight mt-0.5">Manajemen Keuangan</p>
+          <p className="font-bold text-base text-slate-900 dark:text-white leading-tight truncate">Trans Kota Kita</p>
         </div>
       </div>
 
       {/* Nav */}
       <nav className="flex-1 flex flex-col gap-0.5 mt-2 px-3 overflow-y-auto">
-        <p className="px-3 py-2 text-[10px] font-semibold text-slate-400 dark:text-indigo-300/40 uppercase tracking-widest">Menu</p>
+        <p className="px-3 py-2 text-[10px] font-semibold text-slate-400 dark:text-sky-300/40 uppercase tracking-widest">Menu</p>
 
         {navLink("/dashboard", "Dashboard", <FaWallet size={15} />, true)}
         {navLink("/deposit", "Deposit", <FaArrowDown size={15} />)}
@@ -81,24 +80,24 @@ export default function Sidebar() {
           onClick={() => setSummaryOpen(prev => !prev)}
           className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl font-medium text-sm transition-all border-l-2 ${
             isSummaryActive
-              ? "bg-violet-100 text-violet-900 border-violet-500 pl-[10px] shadow-sm dark:bg-white/[0.12] dark:text-white dark:border-violet-400"
-              : "text-slate-500 hover:bg-slate-100 hover:text-slate-700 border-transparent dark:text-indigo-200/60 dark:hover:bg-white/[0.06] dark:hover:text-indigo-100"
+              ? "bg-sky-100 text-sky-900 border-sky-500 pl-[10px] shadow-sm dark:bg-white/[0.12] dark:text-white dark:border-sky-400"
+              : "text-slate-500 hover:bg-slate-100 hover:text-slate-700 border-transparent dark:text-sky-200/60 dark:hover:bg-white/[0.06] dark:hover:text-sky-100"
           }`}
         >
-          <span className={isSummaryActive ? "text-violet-600 dark:text-violet-300" : "text-slate-400 dark:text-indigo-300/50"}>
+          <span className={isSummaryActive ? "text-sky-600 dark:text-sky-300" : "text-slate-400 dark:text-sky-300/50"}>
             <FaChartBar size={15} />
           </span>
           <span className="flex-1 text-left">Summary</span>
           <FaChevronDown
             size={11}
             className={`transition-transform duration-200 ${summaryOpen ? "rotate-180" : ""} ${
-              isSummaryActive ? "text-violet-600 dark:text-indigo-300" : "text-slate-400 dark:text-indigo-400/40"
+              isSummaryActive ? "text-sky-600 dark:text-sky-300" : "text-slate-400 dark:text-sky-400/40"
             }`}
           />
         </button>
 
         {summaryOpen && (
-          <div className="ml-4 pl-3 border-l border-slate-200 dark:border-indigo-400/20 flex flex-col gap-0.5 mb-1">
+          <div className="ml-4 pl-3 border-l border-slate-200 dark:border-sky-400/20 flex flex-col gap-0.5 mb-1">
             {([
               { href: "/summary/table", label: "Table", icon: <FaTable size={12} /> },
               { href: "/summary/graphic", label: "Graphic", icon: <FaChartLine size={12} /> },
@@ -110,11 +109,11 @@ export default function Sidebar() {
                   href={sub.href}
                   className={`flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium transition-all ${
                     active
-                      ? "bg-violet-100 text-violet-900 dark:bg-white/[0.12] dark:text-white"
-                      : "text-slate-500 hover:bg-slate-50 hover:text-slate-700 dark:text-indigo-200/50 dark:hover:bg-white/[0.05] dark:hover:text-indigo-100"
+                      ? "bg-sky-100 text-sky-900 dark:bg-white/[0.12] dark:text-white"
+                      : "text-slate-500 hover:bg-slate-50 hover:text-slate-700 dark:text-sky-200/50 dark:hover:bg-white/[0.05] dark:hover:text-sky-100"
                   }`}
                 >
-                  <span className={active ? "text-violet-600 dark:text-violet-300" : "text-slate-400 dark:text-indigo-300/40"}>{sub.icon}</span>
+                  <span className={active ? "text-sky-600 dark:text-sky-300" : "text-slate-400 dark:text-sky-300/40"}>{sub.icon}</span>
                   {sub.label}
                 </Link>
               );
@@ -122,7 +121,7 @@ export default function Sidebar() {
           </div>
         )}
 
-        <p className="px-3 py-2 mt-2 text-[10px] font-semibold text-slate-400 dark:text-indigo-300/40 uppercase tracking-widest">Tools</p>
+        <p className="px-3 py-2 mt-2 text-[10px] font-semibold text-slate-400 dark:text-sky-300/40 uppercase tracking-widest">Tools</p>
         {navLink("/export", "Export Data", <FaDownload size={14} />)}
 
         {/* Admin only */}
@@ -141,7 +140,7 @@ export default function Sidebar() {
       {/* Tombol hamburger mobile */}
       <button
         onClick={() => setMobileOpen(true)}
-        className="lg:hidden fixed top-3.5 left-3 z-40 p-2 rounded-lg bg-white dark:bg-[#1e1b4b] border border-slate-200 dark:border-white/10 shadow-sm text-slate-600 dark:text-indigo-200"
+        className="lg:hidden fixed top-3.5 left-3 z-40 p-2 rounded-lg bg-white dark:bg-[#0D1F3C] border border-slate-200 dark:border-white/10 shadow-sm text-slate-600 dark:text-sky-200"
       >
         <FaBars size={16} />
       </button>
@@ -155,12 +154,12 @@ export default function Sidebar() {
       )}
 
       {/* Sidebar desktop */}
-      <aside className="hidden lg:flex h-screen w-60 bg-white dark:bg-[#1e1b4b] border-r-2 border-slate-200 dark:border-white/[0.10] flex-col fixed left-0 top-0 z-30 select-none">
+      <aside className="hidden lg:flex h-screen w-60 bg-white dark:bg-[#0D1F3C] border-r-2 border-slate-200 dark:border-white/[0.10] flex-col fixed left-0 top-0 z-30 select-none">
         {sidebarContent}
       </aside>
 
       {/* Sidebar mobile (slide-in) */}
-      <aside className={`lg:hidden fixed top-0 left-0 h-screen w-64 bg-white dark:bg-[#1e1b4b] border-r-2 border-slate-200 dark:border-white/[0.10] flex flex-col z-50 select-none transition-transform duration-300 ${mobileOpen ? "translate-x-0" : "-translate-x-full"}`}>
+      <aside className={`lg:hidden fixed top-0 left-0 h-screen w-64 bg-white dark:bg-[#0D1F3C] border-r-2 border-slate-200 dark:border-white/[0.10] flex flex-col z-50 select-none transition-transform duration-300 ${mobileOpen ? "translate-x-0" : "-translate-x-full"}`}>
         <button
           onClick={() => setMobileOpen(false)}
           className="absolute top-3.5 right-3 p-1.5 rounded-lg text-slate-400 hover:bg-slate-100 dark:hover:bg-white/10"
