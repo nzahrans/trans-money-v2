@@ -3,7 +3,7 @@ import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { FaSignOutAlt, FaChevronDown } from "react-icons/fa";
 
-function decodeJwtPayload(token: string): { username?: string; id?: number; role?: string } | null {
+function decodeJwtPayload(token: string): { username?: string; name?: string; id?: number; role?: string } | null {
   try {
     return JSON.parse(atob(token.split(".")[1]));
   } catch {
@@ -22,7 +22,7 @@ export default function UserBadge() {
     const token = localStorage.getItem("token");
     if (!token) return;
     const payload = decodeJwtPayload(token);
-    if (payload?.username) setUsername(payload.username);
+    if (payload?.username) setUsername(payload.name || payload.username);
     if (payload?.role) setRole(payload.role);
   }, []);
 
@@ -50,7 +50,7 @@ export default function UserBadge() {
         <div className="w-7 h-7 rounded-full bg-gradient-to-br from-sky-500 to-blue-600 flex items-center justify-center text-white text-xs font-bold flex-shrink-0">
           {username[0].toUpperCase()}
         </div>
-        <span className="text-sm font-medium text-slate-700 dark:text-sky-200/80 max-w-[100px] truncate">
+        <span className="text-sm font-medium text-slate-700 dark:text-sky-200/80 max-w-[100px] truncate hidden sm:inline">
           {username}
         </span>
         <FaChevronDown

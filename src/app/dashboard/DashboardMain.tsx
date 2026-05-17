@@ -146,7 +146,7 @@ export default function DashboardMain() {
   return (
     <div className="w-full flex flex-col gap-6">
       {/* Hero Banner */}
-      <div className="rounded-2xl bg-gradient-to-r from-indigo-600 via-blue-600 to-sky-500 dark:from-[#0f2756] dark:via-[#1a3f7a] dark:to-[#1e4d9e] p-6 flex items-center justify-between shadow-lg shadow-indigo-200/50 dark:shadow-blue-900/40">
+      <div className="rounded-2xl bg-gradient-to-r from-indigo-600 via-blue-600 to-sky-500 dark:from-[#0f2756] dark:via-[#1a3f7a] dark:to-[#1e4d9e] p-4 md:p-6 flex items-center justify-between shadow-lg shadow-indigo-200/50 dark:shadow-blue-900/40">
         <div>
           <p className="text-sky-300/70 text-xs font-medium uppercase tracking-widest mb-1">Selamat datang,</p>
           <h1 className="text-2xl font-bold text-white">{username || "Dashboard"}</h1>
@@ -206,8 +206,8 @@ export default function DashboardMain() {
                 <th className="px-5 py-3 text-left font-medium">Date</th>
                 <th className="px-5 py-3 text-left font-medium">Type</th>
                 <th className="px-5 py-3 text-right font-medium">Amount</th>
-                <th className="px-5 py-3 text-left font-medium">Recorder</th>
-                <th className="px-5 py-3 text-left font-medium">Purpose</th>
+                <th className="px-5 py-3 text-left font-medium hidden lg:table-cell">Recorder</th>
+                <th className="px-5 py-3 text-left font-medium hidden md:table-cell">Purpose</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 dark:divide-sky-900/20">
@@ -243,10 +243,10 @@ export default function DashboardMain() {
                   }`}>
                     Rp {trx.amount.toLocaleString("id-ID")}
                   </td>
-                  <td className="px-5 py-3.5 text-slate-600 dark:text-slate-300 text-sm">
+                  <td className="px-5 py-3.5 text-slate-600 dark:text-slate-300 text-sm hidden lg:table-cell">
                     {trx.recorder || <span className="text-slate-300 dark:text-slate-600 italic">—</span>}
                   </td>
-                  <td className="px-5 py-3.5 text-slate-800 dark:text-slate-200 font-medium">{trx.purpose}</td>
+                  <td className="px-5 py-3.5 text-slate-800 dark:text-slate-200 font-medium hidden md:table-cell">{trx.purpose}</td>
                 </tr>
               ))}
               {(!summary?.lastTransactions || summary.lastTransactions.length === 0) && (

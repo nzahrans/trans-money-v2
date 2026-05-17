@@ -35,7 +35,7 @@ export default function SummaryTable() {
   const [deletingId, setDeletingId] = useState<number | null>(null);
   const [deleteError, setDeleteError] = useState("");
   const [editingTrx, setEditingTrx] = useState<Transaction | null>(null);
-  const [editForm, setEditForm] = useState<EditForm>({ amount: "", purpose: "", notes: "", recorder: "" });
+  const [editForm, setEditForm] = useState<EditForm>({ amount: "", purpose: "", notes: "", recorder: "", transactionDate: "" });
   const [editLoading, setEditLoading] = useState(false);
   const [editError, setEditError] = useState("");
 
@@ -130,16 +130,16 @@ export default function SummaryTable() {
 
   return (
     <div className="w-full flex flex-col gap-6">
-      <div className="flex items-center justify-between flex-wrap gap-3">
+      <div className="flex items-start justify-between flex-wrap gap-3">
         <div>
           <h1 className="text-2xl font-bold bg-gradient-to-r from-sky-600 to-blue-600 bg-clip-text text-transparent">Summary</h1>
           <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Menampilkan {filtered.length} dari {totalCount} transaksi</p>
         </div>
-        <div className="flex items-center gap-2 flex-wrap">
+        <div className="flex items-center gap-2 flex-wrap w-full sm:w-auto">
           <input
             type="text"
             placeholder="Cari keperluan / recorder..."
-            className="border border-slate-200 dark:border-sky-700/30 bg-white dark:bg-[#0A1628] px-3 py-2 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-sky-500 text-slate-900 dark:text-slate-100 placeholder:text-slate-400 w-52 shadow-sm"
+            className="border border-slate-200 dark:border-sky-700/30 bg-white dark:bg-[#0A1628] px-3 py-2 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-sky-500 text-slate-900 dark:text-slate-100 placeholder:text-slate-400 w-full sm:w-52 shadow-sm"
             value={search}
             onChange={e => setSearch(e.target.value)}
           />
@@ -168,10 +168,10 @@ export default function SummaryTable() {
               <th className="px-5 py-3 text-left font-medium">Aksi</th>
               <th className="px-5 py-3 text-left font-medium">Tanggal</th>
               <th className="px-5 py-3 text-left font-medium">Keperluan</th>
-              <th className="px-5 py-3 text-left font-medium">Recorder</th>
+              <th className="px-5 py-3 text-left font-medium hidden lg:table-cell">Recorder</th>
               <th className="px-5 py-3 text-left font-medium">Tipe</th>
               <th className="px-5 py-3 text-right font-medium">Jumlah</th>
-              <th className="px-5 py-3 text-left font-medium">Notes</th>
+              <th className="px-5 py-3 text-left font-medium hidden md:table-cell">Notes</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-100 dark:divide-sky-900/20">
@@ -196,14 +196,14 @@ export default function SummaryTable() {
                   {!trx.transactionDate && <span className="ml-1 text-xs text-slate-300 dark:text-slate-600">(input)</span>}
                 </td>
                 <td className="px-5 py-3.5 text-slate-800 dark:text-slate-100 font-medium">{trx.purpose}</td>
-                <td className="px-5 py-3.5 text-slate-600 dark:text-slate-300 text-sm">
+                <td className="px-5 py-3.5 text-slate-600 dark:text-slate-300 text-sm hidden lg:table-cell">
                   {trx.recorder || <span className="text-slate-300 dark:text-slate-600 italic">—</span>}
                 </td>
                 <td className="px-5 py-3.5"><StatusBadge type={trx.type} /></td>
                 <td className={`px-5 py-3.5 text-right font-semibold tabular-nums ${trx.type === "deposit" ? "text-emerald-600 dark:text-emerald-400" : "text-rose-600 dark:text-rose-400"}`}>
                   {trx.type === "withdraw" ? "−" : "+"}Rp {trx.amount.toLocaleString("id-ID")}
                 </td>
-                <td className="px-5 py-3.5 text-sm text-slate-400 dark:text-slate-500 max-w-[200px] truncate">
+                <td className="px-5 py-3.5 text-sm text-slate-400 dark:text-slate-500 max-w-[200px] truncate hidden md:table-cell">
                   {trx.notes || <span className="italic">—</span>}
                 </td>
               </tr>

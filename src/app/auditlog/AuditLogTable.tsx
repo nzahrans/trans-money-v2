@@ -80,7 +80,7 @@ export default function AuditLogTable() {
         <input
           type="text"
           placeholder="Cari aksi / user..."
-          className="border border-slate-200 dark:border-sky-700/30 bg-white dark:bg-[#0A1628] px-3 py-2 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-sky-500 text-slate-900 dark:text-slate-100 placeholder:text-slate-400 w-52 shadow-sm"
+          className="border border-slate-200 dark:border-sky-700/30 bg-white dark:bg-[#0A1628] px-3 py-2 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-sky-500 text-slate-900 dark:text-slate-100 placeholder:text-slate-400 w-full sm:w-52 shadow-sm"
           value={search}
           onChange={e => setSearch(e.target.value)}
         />
@@ -90,7 +90,7 @@ export default function AuditLogTable() {
           <table className="w-full text-sm">
             <thead>
               <tr className="text-xs uppercase tracking-wide text-slate-500 dark:text-slate-400 bg-sky-50/60 dark:bg-sky-900/20">
-                <th className="px-5 py-3 text-left font-medium w-16">ID</th>
+                <th className="px-5 py-3 text-left font-medium w-16 hidden sm:table-cell">ID</th>
                 <th className="px-5 py-3 text-left font-medium">Waktu</th>
                 <th className="px-5 py-3 text-left font-medium">User</th>
                 <th className="px-5 py-3 text-left font-medium">Aksi</th>
@@ -99,7 +99,7 @@ export default function AuditLogTable() {
             <tbody className="divide-y divide-slate-100 dark:divide-sky-900/20">
               {filtered.map((log) => (
                 <tr key={log.id} className="hover:bg-sky-50/40 dark:hover:bg-sky-900/10 transition-colors">
-                  <td className="px-5 py-3.5 text-slate-400 dark:text-slate-500 tabular-nums">{log.id}</td>
+                  <td className="px-5 py-3.5 text-slate-400 dark:text-slate-500 tabular-nums hidden sm:table-cell">{log.id}</td>
                   <td className="px-5 py-3.5 text-xs text-slate-500 dark:text-slate-400 whitespace-nowrap">
                     {log.createdAt
                       ? new Date(log.createdAt).toLocaleString("id-ID", { day: "2-digit", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit", timeZone: "UTC" })

@@ -35,7 +35,7 @@ export default function TransactionHistoryPage() {
   const [deletingId, setDeletingId] = useState<number | null>(null);
   const [deleteError, setDeleteError] = useState("");
   const [editingTrx, setEditingTrx] = useState<Transaction | null>(null);
-  const [editForm, setEditForm] = useState<EditForm>({ amount: "", purpose: "", notes: "", recorder: "" });
+  const [editForm, setEditForm] = useState<EditForm>({ amount: "", purpose: "", notes: "", recorder: "", transactionDate: "" });
   const [editLoading, setEditLoading] = useState(false);
   const [editError, setEditError] = useState("");
 
@@ -146,7 +146,7 @@ export default function TransactionHistoryPage() {
               <tr className="text-xs uppercase tracking-wide text-slate-500 dark:text-slate-400 bg-sky-50/60 dark:bg-sky-900/20">
                 <th className="px-5 py-3 text-left font-medium">Tanggal</th>
                 <th className="px-5 py-3 text-left font-medium">Keperluan</th>
-                <th className="px-5 py-3 text-left font-medium">Catatan</th>
+                <th className="px-5 py-3 text-left font-medium hidden md:table-cell">Catatan</th>
                 <th className="px-5 py-3 text-left font-medium">Tipe</th>
                 <th className="px-5 py-3 text-right font-medium">Jumlah</th>
                 <th className="px-5 py-3 text-center font-medium">Aksi</th>
@@ -160,7 +160,7 @@ export default function TransactionHistoryPage() {
                     {!trx.transactionDate && <span className="ml-1 text-xs text-slate-300 dark:text-slate-600">(input)</span>}
                   </td>
                   <td className="px-5 py-3.5 text-slate-800 dark:text-slate-200 font-medium">{trx.purpose}</td>
-                  <td className="px-5 py-3.5 text-slate-500 dark:text-slate-400 text-sm max-w-[160px] truncate">
+                  <td className="px-5 py-3.5 text-slate-500 dark:text-slate-400 text-sm max-w-[160px] truncate hidden md:table-cell">
                     {trx.notes || <span className="italic text-slate-300 dark:text-slate-600">—</span>}
                   </td>
                   <td className="px-5 py-3.5"><StatusBadge type={trx.type} /></td>
